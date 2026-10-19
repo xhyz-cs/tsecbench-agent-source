@@ -177,3 +177,8 @@ python -m unittest discover -s mcp/tests -t mcp/tests -v    # 全部集成测试
 
 <sub>本仓库资料由 agent 抓取与整理（2026-10-16），非腾讯官方发布。平台内容版权归腾讯所有；
 如对外分享，请保留本出处说明。</sub>
+
+
+## 许可证
+
+本项目原创内容采用 Apache License 2.0，详见仓库根目录 `LICENSE`。第三方代码、技能、数据和工具仍分别遵循其自带的许可证与声明；请一并查看相应目录中的 `LICENSE`、`NOTICE` 及 `docker/tools/LICENSES-and-NOTICES.md`。

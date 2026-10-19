@@ -4,6 +4,8 @@
 **School / 学校:** Jiangmen Xinhui No. 1 Middle School / 江门市新会第一中学  
 **Repository purpose / 仓库用途:** Uncompiled source for the TSecBench hosted Agent image; this repository is private.
 
+**License / 许可证:** Apache License 2.0 for the original project contributions (`LICENSE`); third-party files remain subject to their own licenses and notices.
+
 ## 中文
 
 ### 项目介绍
@@ -109,3 +111,4 @@ Use `.env.example` as a template and keep any real local `.env` out of version c
 ---
 
 **Authors / 作者:** James, minc · **School / 学校:** Jiangmen Xinhui No. 1 Middle School / 江门市新会第一中学
+
