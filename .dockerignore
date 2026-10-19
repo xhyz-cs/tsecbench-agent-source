@@ -1,0 +1,22 @@
+# Build-context hygiene: the context must contain docker/, skills/, docs/, mcp/,
+# plugin/ — everything else is weight or secrets.
+.git
+.venv
+.worktrees
+recon
+build
+**/__pycache__
+**/*.pyc
+.tsecbench-state
+.env
+.env.*
+*.local
+
+# Build-only curator script and an executable ASP webshell sample are not runtime skills.
+/skills/archive.py
+/skills/payloadsallthethings/Upload Insecure Files/Extension ASP/shell.asp
+
+# large local artefacts at the context root (build outputs, the raw kit zip)
+/*.tar.gz
+/*.zip
+/*.7z

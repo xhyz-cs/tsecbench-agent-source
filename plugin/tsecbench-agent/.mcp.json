@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "tsecbench": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["${TSEC_MCP_SCRIPT}"],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "TSEC_STATE_DIR": "${TSEC_STATE_DIR}"
+      }
+    }
+  }
+}

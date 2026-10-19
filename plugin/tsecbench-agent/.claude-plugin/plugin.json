@@ -1,0 +1,11 @@
+{
+  "name": "tsecbench-agent",
+  "version": "0.1.0",
+  "description": "TSecBench 评测平台工具带：Challenges API MCP 服务器 + 跑分技能 + 斜杠命令。给自主 Agent 一把足够锋利的瑞士军刀。",
+  "keywords": ["security", "ctf", "pentest", "benchmark", "mcp"],
+  "author": {
+    "name": "TSecBench Recon (agent-built)",
+    "url": "https://tsecbench.zc.tencent.com/"
+  },
+  "license": "MIT"
+}

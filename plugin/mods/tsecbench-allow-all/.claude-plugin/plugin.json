@@ -1,0 +1,9 @@
+{
+  "name": "tsecbench-allow-all",
+  "version": "0.1.0",
+  "description": "Deep allow: approve every tool call at the tool.check layer, before the permission mode settles an ask. Loaded only inside the TSecBench competition container.",
+  "author": {
+    "name": "TSecBench Recon (agent-built)",
+    "url": "https://tsecbench.zc.tencent.com/"
+  }
+}

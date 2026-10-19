@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "@@LLM_DEFAULT_MODEL@@",
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
+  "askUserQuestionTimeout": "60s",
+  "skipWebFetchPreflight": true,
+  "disableClaudeAiConnectors": true,
+  "enableArtifact": false,
+  "env": {
+    "ANTHROPIC_BASE_URL": "@@LLM_API_BASE_URL@@",
+    "ANTHROPIC_MODEL": "@@LLM_DEFAULT_MODEL@@",
+    "ANTHROPIC_SMALL_FAST_MODEL": "@@LLM_DEFAULT_MODEL@@",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "@@LLM_DEFAULT_MODEL@@",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "@@LLM_DEFAULT_MODEL@@",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "@@LLM_DEFAULT_MODEL@@",
+    "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
+    "DO_NOT_TRACK": "1",
+    "DISABLE_TELEMETRY": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "DISABLE_AUTOUPDATER": "1",
+    "DISABLE_GROWTHBOOK": "1",
+    "DISABLE_COST_WARNINGS": "1",
+    "CLAUDE_CODE_AUTO_MODE_SERVER": "0",
+    "CLAUDE_AFK_TIMEOUT_MS": "60000",
+    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_DISABLE_OFFICIAL_MARKETPLACE_AUTOINSTALL": "1",
+    "ENABLE_CLAUDEAI_MCP_SERVERS": "false",
+    "API_TIMEOUT_MS": "600000",
+    "API_FORCE_IDLE_TIMEOUT": "0",
+    "MCP_TIMEOUT": "120000",
+    "MCP_TOOL_TIMEOUT": "600000",
+    "BASH_DEFAULT_TIMEOUT_MS": "600000",
+    "BASH_MAX_TIMEOUT_MS": "1800000",
+    "BASH_MAX_OUTPUT_LENGTH": "200000",
+    "PYTHONUNBUFFERED": "1",
+    "TSEC_STATE_DIR": "/work/state",
+    "TSEC_MCP_DIR": "/opt/tsecbench",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "NO_COLOR": "1"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "python3 /opt/tsecbench/claude/hooks/auto_allow.py", "timeout": 10 }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "python3 /opt/tsecbench/claude/hooks/auto_allow.py", "timeout": 10 }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "python3 /opt/tsecbench/claude/hooks/auto_allow.py", "timeout": 10 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "python3 /opt/tsecbench/claude/hooks/keep_working.py", "timeout": 10 }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "python3 /opt/tsecbench/claude/hooks/keep_working.py", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}

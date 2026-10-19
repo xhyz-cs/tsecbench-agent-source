@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "tsecbench": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/opt/tsecbench/tsecbench_mcp.py"],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "TSEC_STATE_DIR": "/work/state"
+      }
+    },
+    "chrome": {
+      "type": "stdio",
+      "command": "/usr/local/bin/chrome-devtools-mcp",
+      "args": ["--headless", "--executablePath", "/usr/local/bin/chromium-container"],
+      "env": {
+        "PUPPETEER_SKIP_DOWNLOAD": "1",
+        "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "1"
+      }
+    }
+  }
+}

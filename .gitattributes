@@ -1,0 +1,28 @@
+# Normalize line endings: shell scripts and the container entrypoint MUST stay LF
+# (CRLF breaks bash and the image's ENTRYPOINT), and binary artefacts must never be
+# touched. Everything else follows git's default text handling.
+* text=auto
+
+*.sh         text eol=lf
+*.py         text eol=lf
+Dockerfile   text eol=lf
+.dockerignore text eol=lf
+.gitignore   text eol=lf
+.env.example text eol=lf
+
+# The rest of the text: everything rendered at boot, read by a hook, or copied out of
+# an archive by hand. Pinning these keeps a Windows checkout or a `git archive` from
+# putting CRLF into a file that gets pasted into a shell or diffed on the server.
+*.md       text eol=lf
+*.txt      text eol=lf
+*.json     text eol=lf
+*.template text eol=lf
+
+# never convert binaries
+*.zip  -text
+*.deb  -text
+*.gz   -text
+*.tar  -text
+*.png  -text
+*.jpg  -text
+*.pdf  -text

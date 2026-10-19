@@ -1,0 +1,24 @@
+# Virtualenv / caches
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local runtime state written by the MCP notes ledger
+.tsecbench-state/
+
+# Raw downloaded platform bundles kept for recon only (untrusted, large).
+# The curated, human-reviewed reference docs live in docs/.
+recon/
+
+# Local env files with credentials
+.env
+*.local
+.worktrees/
+
+# Tool release packages (Ghidra/JADX/r2) - placed manually from the teammate kit,
+# too large for git; integrity pinned by docker/tools/releases/SOURCES.sha256
+docker/tools/releases/
+!docker/tools/releases/
+!docker/tools/releases/nikto-2.6.1.zip
+!docker/tools/releases/README.md
+!docker/tools/releases/SOURCES.sha256
