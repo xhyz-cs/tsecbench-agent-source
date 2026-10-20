@@ -1,0 +1,32 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
+#
+# Block direct pushes to main. Contributions go through pull requests; see
+# CONTRIBUTING.md. Enable once per clone:
+#
+#     git config core.hooksPath .githooks
+#
+# Maintainers may bypass deliberately for an emergency:
+#
+#     TSEC_ALLOW_DIRECT_PUSH=1 git push
+
+[ "$TSEC_ALLOW_DIRECT_PUSH" = "1" ] && exit 0
+
+blocked=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main) blocked=1 ;;
+  esac
+done
+
+if [ "$blocked" -eq 1 ]; then
+  echo "pre-push: direct pushes to 'main' are not allowed." >&2
+  echo "Push a branch and open a pull request instead:" >&2
+  echo "    git switch -c <branch>" >&2
+  echo "    git push -u origin <branch>" >&2
+  echo "Maintainers may bypass once with TSEC_ALLOW_DIRECT_PUSH=1." >&2
+  exit 1
+fi
+
+exit 0
