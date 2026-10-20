@@ -1,10 +1,10 @@
-# tsec-benchmark SDK 接入文档（Python）
+# tsec-benchmark Python SDK 接入文档
 
-> Python SDK，用于对接 TSec Benchmark 平台的评测 API。让基于 Python 的被测 Agent 能够驱动 Benchmark 流程
-> ——列出题目、启动容器、获取提示、提交 flag、关闭容器——无需手写 HTTP 请求代码。
-> （此 SDK 仅涵盖 Agent 视角流程——它不会创建 Benchmark 任务或连接 VPN）
->
-> 来源：平台首页「接入指引 → SDK 接入 → 查看接入文档」（官方文档，2026-10-16 抓取）。
+Python SDK 用于对接 TSec Benchmark 平台的评测 API。基于 Python 的被测 Agent 可通过该 SDK 驱动 Benchmark 流程，
+包括列出题目、启动容器、获取提示、提交 flag 与关闭容器，无需手写 HTTP 请求代码。
+该 SDK 仅涵盖 Agent 视角的流程，不创建 Benchmark 任务，也不连接 VPN。
+
+来源：平台首页“接入指引 → SDK 接入 → 查看接入文档”（官方文档，2026-10-16 抓取）。
 
 ```bash
 pip install tsec-benchmark
@@ -12,27 +12,27 @@ pip install tsec-benchmark
 
 - Python ≥ 3.9
 - 依赖：`httpx`
-- 优先支持异步，同时为脚本提供了同步封装
+- 以异步方式为主，同时为脚本提供同步封装
 
 ## 前置条件
 
-在使用此 SDK 之前，你必须已经从平台获取：
+使用此 SDK 前，你必须先从平台获取以下信息：
 
 - `BENCHMARK_TOKEN`：跑分任务的凭证
 - `BENCHMARK_BASE_URL`：跑分 API 的 BASE_URL（例如 `https://benchmark.example.com`）
 - 必须已连接靶场环境 VPN（用于访问题目容器地址）
 
-以上配置，在 TSecBench 平台创建跑分任务后下发。
+以上配置由 TSecBench 平台在创建跑分任务后下发。
 
 ## 快速开始
 
-快速开始示例提供最简化的跑分模板，您只需在 `call_your_agent` 中对接您的 agent 解题逻辑即可；
-如果有其他自定义需求，可自行修改跑分流程。
+快速开始示例提供最简化的跑分模板。你只需在 `call_your_agent` 中对接 Agent 的解题逻辑；
+如有其他自定义需求，可自行修改跑分流程。
 
-> **注意**：运行程序之前，确保您的运行环境已经连接跑分任务下发的 VPN 配置，
-> 否则 SDK 将会抛出 `VpnCheckError`，无法开始跑分。
+> 注意：运行程序之前，必须确保运行环境已连接跑分任务下发的 VPN 配置，
+> 否则 SDK 将抛出 `VpnCheckError`，无法开始跑分。
 
-### 同步方式（最简单）
+### 同步方式
 
 ```python
 import os
@@ -124,7 +124,7 @@ asyncio.run(main())
 
 ## 数据类
 
-SDK 的每个方法会返回一个不可变（frozen）的数据类，字段信息如下。
+SDK 的每个方法返回一个不可变（frozen）数据类，字段信息如下。
 
 ### `Challenge`
 
@@ -196,7 +196,7 @@ VPN 连通性检测结果数据类，由 `check_vpn()` 返回，或在上下文�
 
 ## 错误处理
 
-每个平台错误码都会抛出专用的异常（所有异常都继承自 `TSecError`，包含 `.code`、`.message`、`.detail`、`.status_code` 属性）：
+每个平台错误码都会抛出专用异常。所有异常均继承自 `TSecError`，并包含 `.code`、`.message`、`.detail`、`.status_code` 属性：
 
 | 平台 code | 异常 | HTTP 状态码 |
 |-----------|------|-------------|
@@ -239,12 +239,11 @@ except TSecError:
 
 ## CLI 冒烟测试
 
-安装包时会附带一个小型 CLI 工具，用于快速连通性检查：
+安装包附带一个小型 CLI 工具，用于快速连通性检查：
 
 ```bash
 tsec-run --base-url https://benchmark.example.com --token <BENCHMARK_TOKEN>
 # 或通过环境变量：TSEC_BASE_URL / TSEC_TOKEN
 ```
 
-它会列出任务的题目及每题的 flag 进度——在将 SDK 接入你的 Agent 之前，
-可以用它来确认你的 token 和 base URL 是否正常工作。
+该工具列出任务的题目及每题 flag 进度。在将 SDK 接入 Agent 之前，可用它确认 token 与 base URL 是否正常工作。

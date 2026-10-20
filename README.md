@@ -105,7 +105,7 @@ Use `.env.example` as a template and keep any real local `.env` out of version c
 - `mcp/` — Platform MCP server and offline tests.
 - `plugin/` — Claude Code plugins and hook/permission components.
 - `skills/` — Skill catalog, indexes, and reference material.
-- `docs/` — Platform API, modes, SDK, and Agent prompt documentation.
+- `docs/` — Platform API, modes, SDK, and Agent prompt documentation; prose conventions are defined in `docs/style-guide.md`.
 - `build/` — Documentation and configuration-scan helper scripts.
 
 ## Contributing

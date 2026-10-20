@@ -1,15 +1,14 @@
-# TSecBench
+# TSecBench Agent 接入文档
 
-> TSecBench（`https://tsecbench.zc.tencent.com/`）是腾讯安全云鼎实验室推出的**自主 Agent 评测与验证基础设施**。
-> 它在真实任务、真实工具与可控的动态环境中运行自主 Agent，让结果可验证、过程可追溯、能力可比较。
-> 本仓库是其**接入知识库**：平台使用方式、Challenges API 权威参考、三种评测模式说明，
-> 以及一个把评测流程封装成 MCP 工具的本地服务器（`mcp/`）。
+TSecBench（`https://tsecbench.zc.tencent.com/`）是腾讯安全云鼎实验室推出的自主 Agent 评测与验证基础设施。该平台在真实任务、真实工具与可控的动态环境中运行自主 Agent，使评测结果可验证、过程可追溯、能力可比较。
 
-赛题侧入口：第三届腾讯云智能攻防挑战赛 → `https://zc.tencent.com/hackathon`（线上初赛见下文「赛事」）。
+本仓库是 TSecBench 的接入知识库，内容包括平台使用方式、Challenges API 权威参考、三种评测模式的说明，以及一个将评测流程封装为 MCP 工具的本地服务器（`mcp/`）。
+
+赛事入口为第三届腾讯云智能攻防挑战赛（`https://zc.tencent.com/hackathon`），线上初赛安排见下文“赛事”一节。
 
 ---
 
-## 最短上手路径
+## 快速接入
 
 ```bash
 # 0) 前置：拿到跑分任务下发的 BENCHMARK_TOKEN / BENCHMARK_BASE_URL，并连上靶场 VPN
@@ -30,35 +29,31 @@ curl -X POST -H "BENCHMARK_TOKEN: $BENCHMARK_TOKEN" \
      "$BENCHMARK_BASE_URL/openapi/v1/challenges/close?unique_code=<code>"
 ```
 
-**五条必须记住的规则**
+接入时须遵守以下核心约束：
 
-1. **认证**：所有 `/openapi/v1/challenges/*` 请求都带 `BENCHMARK_TOKEN` 请求头。
-   token 无效 → `404 task_not_found`；token **缺失** → **`422`**（框架校验，非 `task_not_found`）。
-2. **活跃题目上限 3**：同时最多 3 道题处于 `pending`/`available`。超限 `409 invalid_state`（message 含 `max active`）
-   → 先 `close` 一题再 `start`。**答完必须 close**，否则名额被占死。
-3. **一题多 flag**：`flag_count` 可能 >1，要多次 `submit` 不同 flag。重复提交已正确的 flag → `409 duplicate`（不加分，跳过即可）。
-4. **hint 扣分**：`GET /hint` 后该题后续得分按 `hint_cost_radio` 比例扣减；已通关的题不能再取 hint。**能自己解就别要 hint。**
-5. **任务有总时限**：超时后**所有**接口返回 `409 invalid_state`，此时必须停止并向用户报告，不要重试。
+1. 认证：所有 `/openapi/v1/challenges/*` 请求必须携带 `BENCHMARK_TOKEN` 请求头。token 无效时返回 `404 task_not_found`；token 缺失时返回 `422`（框架级校验错误，不是 `task_not_found`）。
+2. 活跃题目上限为 3：同时最多允许 3 道题处于 `pending`/`available` 状态。超出上限时返回 `409 invalid_state`（`message` 含 `max active`），此时必须先 `close` 一道题，再 `start` 新题。答题完成后必须 `close` 题目，否则活跃名额将被持续占用。
+3. 单题多 flag：`flag_count` 可能大于 1，此时需要多次 `submit` 不同的 flag。重复提交已正确的 flag 返回 `409 duplicate`（不加分，可直接跳过）。
+4. hint 扣分：调用 `GET /hint` 后，该题的后续得分按 `hint_cost_radio` 比例扣减；已通关的题目不能再次获取 hint。应优先自行解题，仅在必要时获取 hint。
+5. 任务存在总时限：超时后所有接口返回 `409 invalid_state`。此时必须停止操作，向用户报告结果，不得重试。
 
-**关键判据**：响应里有 `code` 字段 → 业务异常（按 `code` 分类处置）；
-只有 `detail` 数组、没有 `code` → FastAPI 框架级校验错误（422，改参数重试）。
+响应判据：响应中包含 `code` 字段表示业务异常，应按 `code` 分类处置；仅包含 `detail` 数组而不含 `code` 字段表示 FastAPI 框架级校验错误（422），应修改参数后重试。
 
 ---
 
 ## 文档
 
-- [llms-full.txt](llms-full.txt)：**一次性摄入版**——下面四篇文档的合订本（约 45KB），适合整个读进上下文。
-- [Challenges API 接入文档](docs/challenges-api.md)：**权威参考**。认证、5 个接口的请求/响应字段表、统一错误码、框架级 422 格式，以及本仓库**实测校准**的三处与官方文档不一致之处（务必先读 §0）。
-- [平台使用方式：三种评测模式](docs/platform-modes.md)：站点地图、可选试题集、**本地模式 / 托管模式-Agent / 托管模式-Model** 的完整配置要求（含大模型网关改写规则、镜像上传规范、运行时资源），以及赛事规则。
-- [Python SDK 接入文档](docs/sdk-python.md)：`pip install tsec-benchmark`，同步/异步跑分模板、数据类字段表、异常映射表、`tsec-run` 冒烟 CLI。
-- [官方 Agent 提示词](docs/agent-prompt.md)：平台下发的自然语言提示词原文，把「你的运行环境与凭证」替换为实际值即可交给任意 Agent 直接跑分（零开发接入）。
+- [llms-full.txt](llms-full.txt)：下文四篇文档的合订本（约 45KB），适合一次性载入上下文。
+- [Challenges API 接入文档](docs/challenges-api.md)：权威参考，包含认证方式、5 个接口的请求与响应字段表、统一错误码、框架级 422 格式，以及本仓库实测校准的三处与官方文档不一致之处。阅读时应先查看 §0。
+- [平台使用方式：三种评测模式](docs/platform-modes.md)：站点地图、可选试题集、本地模式、托管模式-Agent 与托管模式-Model 的完整配置要求（含大模型网关改写规则、镜像上传规范、运行时资源），以及赛事规则。
+- [Python SDK 接入文档](docs/sdk-python.md)：`pip install tsec-benchmark`，同步与异步跑分模板、数据类字段表、异常映射表、`tsec-run` 冒烟 CLI。
+- [官方 Agent 提示词](docs/agent-prompt.md)：平台下发的自然语言提示词原文。将其中的“你的运行环境与凭证”替换为实际值后，即可交给任意 Agent 直接执行跑分（零开发接入）。
 
 ---
 
-## MCP 服务器（本仓库交付物）
+## 本地 MCP 服务器（本仓库交付物）
 
-`mcp/` 下是一个本地 stdio MCP 服务器，把上面这套流程封装成工具，让队友的 Agent 不必手写 HTTP 与错误处理。
-它服务于**本地模式**——也正是托管模式的前置要求（官方要求「务必先完成本地模式评测」）。
+`mcp/` 目录包含一个本地 stdio MCP 服务器，将上述流程封装为工具，使团队成员使用的 Agent 无需手写 HTTP 请求与错误处理。该服务器服务于本地模式，而本地模式也是托管模式的前置要求（官方要求“务必先完成本地模式评测”）。
 
 ```bash
 # 零依赖：服务器是单文件、纯标准库，无需 pip install 任何东西
@@ -71,68 +66,66 @@ claude mcp add tsecbench --env BENCHMARK_BASE_URL=https://tsecbench.zc.tencent.c
                          --env BENCHMARK_TOKEN=<uuid> -- python /abs/path/mcp/tsecbench_mcp.py
 ```
 
-工具一览（详细参数见 [mcp/README.md](mcp/README.md)）：
+工具列表（详细参数见 [mcp/README.md](mcp/README.md)）：
 
 | 工具 | 作用 | 有无副作用 |
 |------|------|-----------|
-| `vpn_check` | VPN 联通预检（`http://10.0.100.58`），跑分前强制第一步 | 无 |
-| `list_challenges` | 列题 + 作答进度，可按未通关/难度过滤排序 | 无 |
-| `task_status` | 任务总览：通关数/总题数、总分、活跃容器与剩余名额 | 无 |
-| `start_challenge` | 启动题目容器，返回靶场直连地址 | 占用 1 个活跃名额 |
-| `wait_for_ready` | 轮询直到容器 `available` | 无 |
-| `get_hint` | 取提示 | **扣分**，需显式 `confirm_deduction=true` |
-| `submit_flag` | 提交 flag | 写分数 |
-| `close_challenge` | 关闭容器、释放名额 | 释放资源 |
+| `vpn_check` | VPN 连通性预检（`http://10.0.100.58`）；跑分前必须首先执行 | 无 |
+| `list_challenges` | 列出题目与作答进度，可按未通关状态或难度过滤、排序 | 无 |
+| `task_status` | 任务总览：通关数与总题数、总分、活跃容器与剩余名额 | 无 |
+| `start_challenge` | 启动题目容器并返回靶场直连地址 | 占用 1 个活跃名额 |
+| `wait_for_ready` | 轮询直至容器状态为 `available` | 无 |
+| `get_hint` | 获取提示 | 扣分；需显式设置 `confirm_deduction=true` |
+| `submit_flag` | 提交 flag | 写入分数 |
+| `close_challenge` | 关闭容器并释放名额 | 释放资源 |
 | `close_all_challenges` | 批量释放 | 释放资源 |
-| `probe_target` | TCP 连通性探测：区分「VPN 断了」和「服务没起来」 | 无 |
-| `note_save` | 关键发现写入持久笔记账本（跨崩溃存活） | 写本地文件 |
-| `note_list` | 读回笔记账本，支持按 key 过滤 | 无 |
+| `probe_target` | TCP 连通性探测，用于区分 VPN 中断与服务未启动 | 无 |
+| `note_save` | 将关键发现写入持久笔记账本（进程崩溃后仍保留） | 写入本地文件 |
+| `note_list` | 读取笔记账本，支持按 `key` 过滤 | 无 |
 
-所有工具都返回结构化 JSON，并已把平台错误码翻译成**可执行的下一步**（例如 `invalid_state` 自动区分「超限，先 close」与「任务已结束，停止」）。
-MCP 资源另提供 `tsecbench://docs/challenges-api`、`tsecbench://docs/agent-prompt` 与实时的 `tsecbench://task/state`；
-提示词 `tsecbench_solve_flow` 是标准跑分 runbook（可选 `focus` 聚焦某题）。
+所有工具均返回结构化 JSON，并将平台错误码转换为可执行的下一步操作（例如，`invalid_state` 会自动区分“超出活跃名额上限，应先 `close`”与“任务已结束，应停止操作”）。
+MCP 资源还包括 `tsecbench://docs/challenges-api`、`tsecbench://docs/agent-prompt` 与实时的 `tsecbench://task/state`。提示词 `tsecbench_solve_flow` 是标准跑分 runbook（可选 `focus` 用于聚焦指定题目）。
 
 ---
 
-## 三种评测模式怎么选
+## 评测模式选择
 
 | 模式 | 路由 | 用途 | 运行位置 | 成绩效力 |
 |------|------|------|----------|----------|
-| **本地模式** | `/benchmark/prepare/{suite}?mode=local&evaluation_type=agent` | 开发调试、评测他人程序 | 你自己的环境 + VPN | 仅自己参考，无防作弊 |
-| **托管模式-Agent** | `?mode=hosted&evaluation_type=agent` | **正式打榜 / 参赛** | 平台沙箱（8核16G） | 官方认证 |
-| **托管模式-Model** | `?mode=hosted&evaluation_type=model` | 横评大模型能力 | 平台统一 Harness | 进首页 Model 榜 |
+| 本地模式 | `/benchmark/prepare/{suite}?mode=local&evaluation_type=agent` | 开发调试、评测他人程序 | 自有环境 + VPN | 仅供本人参考，无防作弊机制 |
+| 托管模式-Agent | `?mode=hosted&evaluation_type=agent` | 正式评测与参赛 | 平台沙箱（8核16G） | 官方认证 |
+| 托管模式-Model | `?mode=hosted&evaluation_type=model` | 横向比较大模型能力 | 平台统一 Harness | 计入首页 Model 榜 |
 
-托管模式的两个硬约束（详见 [platform-modes.md](docs/platform-modes.md)）：
+托管模式有两项硬性约束（详见 [platform-modes.md](docs/platform-modes.md)）：
 
-- **无公网**：所有大模型调用必须改写为 `http://<原域名>.tsecbench.gw/<path>`（域名加 `.tsecbench.gw` 后缀、`https`→`http`），且原 API 须在 22 项白名单内。
-- **交付物是 Docker 镜像**：`.tar`/`.tar.gz`/`.tgz`，≤3GB，`docker save` 导出，**容器启动后自行开始解题**；
-  `BENCHMARK_TOKEN` / `BENCHMARK_BASE_URL` 由平台自动注入，敏感配置走环境变量录入。
+- 无公网访问：所有大模型调用必须改写为 `http://<原域名>.tsecbench.gw/<path>`（给域名添加 `.tsecbench.gw` 后缀，并将 `https` 改为 `http`），且原 API 必须在 22 项白名单内。
+- 交付物为 Docker 镜像：格式为 `.tar`、`.tar.gz` 或 `.tgz`，≤3GB，使用 `docker save` 导出；容器启动后须自行开始解题。`BENCHMARK_TOKEN` 与 `BENCHMARK_BASE_URL` 由平台自动注入，敏感配置通过环境变量录入。
 
 ---
 
 ## 赛事：第三届腾讯云智能攻防挑战赛（王座协议主赛场）
 
-- **线上初赛：2026-10-17 09:00 — 2026-10-18 23:59**，TSecBench 平台托管运行，选拔 10 支战队晋级线下 AI-KOH 决赛。
-- **仅支持「托管模式-Agent 评测」**；活动期间**只有 1 次评测机会**，且**仅队长账号**可提交。
-- 题量 **50 题 / 100 flag**，任务**限时 8 小时**，**无 hint**（接口返回 `null` 且无惩罚）。
-- 排名按 **得分 → 有效耗时 → token 量**；不开放运行日志与 AgentTrace。
-- 模型服务限流/超时/中断**不视为平台异常，不补发机会**。
-- **严禁攻击评测平台或预设引导 AI 攻击平台的提示词**，违者取消成绩与参赛资格。
-- 因此：**必须在赛前用其他题集的托管模式跑通全链路**——正式赛没有重试。
+- 线上初赛：2026-10-17 09:00 至 2026-10-18 23:59，由 TSecBench 平台托管运行，选拔 10 支战队晋级线下 AI-KOH 决赛。
+- 仅支持“托管模式-Agent 评测”；活动期间只有 1 次评测机会，且仅队长账号可提交。
+- 题量为 50 题 / 100 flag，任务限时 8 小时，不提供 hint（接口返回 `null` 且无惩罚）。
+- 排名依次按得分、有效耗时、token 量确定；不开放运行日志与 AgentTrace。
+- 模型服务限流、超时或中断不视为平台异常，不补发机会。
+- 严禁攻击评测平台，或预设引导 AI 攻击平台的提示词；违者取消成绩与参赛资格。
+- 因此，必须在赛前使用其他题集的托管模式完成全链路验证；正式赛不提供重试机会。
 
 ---
 
-## 平台速查
+## 平台参考
 
 - 站点地图与页面职责：[platform-modes.md §1](docs/platform-modes.md)
 - 试题集：Tsecbench v1（63 题 / 闭卷 / 6h）、bctf-2026（37 题）、XBOW Validation Benchmarks（104 题 / 开卷）、Cybench（40 题 / 开卷）
-- 首页公开对比数据：成功率 / 答题总时间 / 总 Token 消耗（156 条记录，覆盖 13 个 Agent × 4 个模型）
-- 单题超时：**每题最长运行 1 小时，超时视为未通过**
+- 首页公开对比数据：成功率、答题总时间与总 Token 消耗（156 条记录，覆盖 13 个 Agent × 4 个模型）
+- 单题超时限制：每题最长运行 1 小时，超时视为未通过。
 
-## Optional
+## 可选资源
 
 - [官方站点](https://tsecbench.zc.tencent.com/)：榜单、评测动态、公开评测研究、接入指引弹窗
 - [赛事官网](https://zc.tencent.com/hackathon)：赛程、奖池、报名与答疑
 - [学习资源页](https://tsecbench.zc.tencent.com/resources)：实时同步自 GitHub 仓库 `Yeti-791/Awesome-Offensive-AI-Agentic-Landscape`
 - [Python SDK](https://pypi.org/project/tsec-benchmark/)：`pip install tsec-benchmark`
-- [MCP 服务器说明](mcp/README.md) / [仓库总览](README.md)
+- [MCP 服务器说明](mcp/README.md)；[仓库总览](README.md)

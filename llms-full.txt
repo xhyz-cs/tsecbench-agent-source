@@ -1,40 +1,40 @@
 # TSecBench — Full Reference Corpus
 
-> 供 LLM 一次性摄入的完整资料。这是 `llms.txt` 引用的四篇文档的合订本：
+> 面向 LLM 单次读取的完整资料汇编。本文档为 `llms.txt` 所引用四篇文档的合订本：
 > Challenges API（含实测校准）→ 平台三种评测模式与赛事规则 → Python SDK → 官方 Agent 提示词。
-> 内容由 agent 抓取并整理自 `https://tsecbench.zc.tencent.com/` 的平台官方文档（2026-10-16），
-> 拆分阅读请用 `docs/` 下的单文件版本。
+> 内容由 Agent 于 2026-10-16 抓取并整理自 `https://tsecbench.zc.tencent.com/` 的平台官方文档；
+> 按单篇阅读请使用 `docs/` 下的对应文件。
 
 ---
 
 ---
 
-# TSecBench Challenges API 接入文档
+# TSecBench Challenges API 接入指南
 
 > 本文档面向通过 AI Agent 程序调用 TSec Benchmark Platform 评测接口的开发者或 Coding Agent。
 >
-> 文档分为「总览」与「接口详情」两部分：
-> - **总览**（§1~§4）：认证方式、接口列表与调用流程、注意事项、统一异常处理。
-> - **接口详情**（§5）：逐个介绍每个接口的请求/响应及其专属业务异常。
+> 文档分为“总览”与“接口详情”两部分：
+> - 总览（§1~§4）：认证方式、接口列表与调用流程、注意事项、统一异常处理。
+> - 接口详情（§5）：逐一说明各接口的请求、响应及其专属业务异常。
 
-来源：`https://tsecbench.zc.tencent.com/` 首页「评测服务 API 文档」面板（平台官方文档，2026-10-16 抓取）。
-本文件**结构忠实于官方文档**；标注「**增补**」的内容为本仓库补充，**非官方原文**（共 3 处：§4.3、§5.2、§5.4），其余正文为官方文档内容。
-与官方文档不一致的实测行为集中列在 §0，正文对应处以「实测」标注。
+来源：`https://tsecbench.zc.tencent.com/` 首页“评测服务 API 文档”面板（平台官方文档，2026-10-16 抓取）。
+本文档的结构与官方文档保持一致。标注为“增补”的内容由本仓库补充，不属于官方原文（共 3 处：§4.3、§5.2、§5.4）；其余正文为官方文档内容。
+与官方文档不一致的实测行为集中列于 §0，正文对应位置以“实测”标注。
 
 ---
 
 ## 0. 实测校准（官方文档之外的补充）
 
-以下结论由本仓库对线上服务的真实探测得出，**与官方文档描述不一致**，实现时必须按实测行为处理：
+以下结论由本仓库对线上服务的实际探测得出，与官方文档的描述不一致。实现时必须按实测行为处理：
 
 | 场景 | 官方文档 | 实测（2026-10-16） |
 |------|----------|--------------------|
-| 请求**缺少** `BENCHMARK_TOKEN` 请求头 | 「若 token 无效或缺失，返回 `404 task_not_found`」 | **HTTP 422**，框架级校验错误：`{"detail":[{"type":"missing","loc":["header","BENCHMARK_TOKEN"],"msg":"Field required","input":null}]}` |
-| 请求带**无效** token | `404 task_not_found` | HTTP 404 `{"code":"task_not_found","message":"invalid or unknown benchmark token","detail":{}}` ✅ 一致 |
-| OpenAPI schema | —— | `/openapi/openapi.json`、`/openapi/docs` 均 **404**，平台不暴露 schema |
-| API 承载主机 | `<platform-host>` | 与站点**同源**：`https://tsecbench.zc.tencent.com` |
+| 请求缺少 `BENCHMARK_TOKEN` 请求头 | “若 token 无效或缺失，返回 `404 task_not_found`” | HTTP 422，框架级校验错误：`{"detail":[{"type":"missing","loc":["header","BENCHMARK_TOKEN"],"msg":"Field required","input":null}]}` |
+| 请求带无效 token | `404 task_not_found` | HTTP 404 `{"code":"task_not_found","message":"invalid or unknown benchmark token","detail":{}}`，一致 |
+| OpenAPI schema | —— | `/openapi/openapi.json`、`/openapi/docs` 均 404，平台不暴露 schema |
+| API 承载主机 | `<platform-host>` | 与站点同源：`https://tsecbench.zc.tencent.com` |
 
-**复现方式**（2026-10-16 实测；下列命令不消耗题目名额，也不需要有效 token）：
+复现方式（2026-10-16 实测；下列命令不消耗题目名额，也不需要有效 token）：
 
 ```bash
 # ① 缺少 BENCHMARK_TOKEN 头 → HTTP 422，body 为 FastAPI detail 数组：
@@ -50,27 +50,27 @@ curl -s -o /dev/null -w '%{http_code}\n' https://tsecbench.zc.tencent.com/openap
 curl -s -o /dev/null -w '%{http_code}\n' https://tsecbench.zc.tencent.com/openapi/docs
 ```
 
-上述请求全部直接打到站点域名即命中平台 API，这也正是「API 与站点同源」的依据——不需要另找 API 域名。
-本仓库没有真实 `BENCHMARK_TOKEN`，因此**只验证了鉴权失败路径与 schema 暴露情况**；接口成功响应与业务错误分流仍来自官方文档 + 离线 mock（见仓库 README 的「资料出处与可信度」一节）。
+上述请求均直接指向站点域名即可命中平台 API，这是“API 与站点同源”的依据，无需另行查找 API 域名。
+本仓库没有真实 `BENCHMARK_TOKEN`，因此仅验证了鉴权失败路径与 schema 暴露情况；接口成功响应与业务错误分流仍来自官方文档与离线 mock（见本仓库 README 的“资料出处与可信度”一节）。
 
-实现建议：**缺失 token 与无效 token 要分别处理**。前者是 422（无 `code` 字段，结构为 FastAPI `detail` 数组），后者是 404 `task_not_found`。
-不要用 `code == "task_not_found"` 作为「未配置 token」的判据——那会漏掉 422。
-
----
-
-## 使用须知
-
-在使用本 API 之前，你必须完成以下步骤：
-
-1. 获取 `BENCHMARK_BASE_URL` 和 `BENCHMARK_TOKEN` 配置信息。（在 TSecBench 平台创建跑分任务后下发）
-2. 连接靶场 VPN。所有题目入口地址，必须在连接靶场环境 VPN 后才可访问，否则将无法解题拿到答案。
-   （靶场 VPN、`BENCHMARK_BASE_URL`、`BENCHMARK_TOKEN` 一起在 TSecBench 平台创建跑分任务后下发）
+实现建议：缺失 token 与无效 token 应分别处理。前者为 422（无 `code` 字段，结构为 FastAPI `detail` 数组），后者为 404 `task_not_found`。
+不得将 `code == "task_not_found"` 作为“未配置 token”的判据，否则会漏掉 422。
 
 ---
 
-# 一、总览
+## 使用前提
 
-## 1. 认证方式
+使用本 API 前，你必须完成以下步骤：
+
+1. 获取 `BENCHMARK_BASE_URL` 和 `BENCHMARK_TOKEN` 配置信息（在 TSecBench 平台创建跑分任务后下发）。
+2. 连接靶场 VPN。所有题目入口地址必须在连接靶场环境 VPN 后方可访问，否则无法解题并取得答案。
+   （靶场 VPN、`BENCHMARK_BASE_URL`、`BENCHMARK_TOKEN` 均在 TSecBench 平台创建跑分任务后一并下发）
+
+---
+
+## 一、总览
+
+### 1. 认证方式
 
 所有 `/openapi/v1/challenges/*` 接口通过 HTTP 请求头 `BENCHMARK_TOKEN` 进行鉴权。
 
@@ -86,11 +86,11 @@ Host: <platform-host>
 BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
 
-> 若 token **无效**，返回 `404 task_not_found`；若 token **缺失**，实测返回 `422`（见 §0）。
+> 若 token 无效，返回 `404 task_not_found`；若 token 缺失，实测返回 `422`（见 §0）。
 
 ---
 
-## 2. 接口列表与调用流程
+### 2. 接口列表与调用流程
 
 下表列出全部接口；序号即推荐的标准调用顺序。
 
@@ -114,28 +114,28 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
 
 - 步骤 2-6 可对每道题目重复执行。
-- 同一时间，**最多只能启动 3 道题目**。
-- 一道题可能有多个 flag（`flag_count`），需多次 `submit`。
-- 查看 hint 后提交会按 `hint_cost_radio` 比例扣减该题得分。
-- 已通关（所有 flag 全部正确提交）的题目不能再查看提示。
+- 同一时间最多只能启动 3 道题目。
+- 一道题可能有多个 flag（`flag_count`），需多次调用 `submit`。
+- 查看 hint 后提交，将按 `hint_cost_radio` 比例扣减该题得分。
+- 已通关（所有 flag 均已正确提交）的题目不能查看提示。
 
 ---
 
-## 3. 注意事项
+### 3. 注意事项
 
-1. **VPN 连接**：启动题目后返回的 `container_addr` 需要通过 SSLVPN 直连，确保 VPN 已连接再访问靶场。
-2. **超时机制**：跑分任务有总时限，超时后所有接口将返回 `invalid_state` 错误。
-3. **提示扣分**：调用 hint 接口后，该题后续 flag 得分按比例扣减（具体比例由题目配置决定）。
-4. **幂等性**：同一 flag 重复提交不会重复加分，第二次会返回 `duplicate` 错误。
-5. **资源释放**：完成答题后务必调用 close 接口释放容器资源。
+1. VPN 连接：启动题目后返回的 `container_addr` 需通过 SSLVPN 直连，访问靶场前应确认 VPN 已连接。
+2. 超时机制：跑分任务有总时限，超时后所有接口均返回 `invalid_state` 错误。
+3. 提示扣分：调用 hint 接口后，该题后续 flag 得分按比例扣减（具体比例由题目配置决定）。
+4. 幂等性：同一 flag 重复提交不会重复加分，第二次提交返回 `duplicate` 错误。
+5. 资源释放：完成答题后必须调用 close 接口释放容器资源。
 
 ---
 
-## 4. 异常处理
+### 4. 异常处理
 
-本节只介绍**统一的响应结构与通用错误码**。各接口的专属业务异常请见对应的接口详情小节（§5）。
+本节仅说明统一的响应结构与通用错误码。各接口的专属业务异常，见对应的接口详情小节（§5）。
 
-### 4.1 统一错误响应格式
+#### 4.1 统一错误响应格式
 
 所有业务异常均返回以下 JSON 结构：
 
@@ -153,18 +153,18 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 | `message` | string | 错误描述信息 |
 | `detail` | object | 附加详情（通常为空对象） |
 
-### 4.2 通用错误码一览
+#### 4.2 通用错误码一览
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `task_not_found` | `BENCHMARK_TOKEN` 无效、缺失或对应任务不存在（**缺失实测为 422**） |
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `invalid_state` | 任务已结束（超时过期或手动停止），不允许继续操作 |
-| **409** | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
-| **503** | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
-| **500** | `internal_error` | 未预期的系统内部错误 |
+| 404 | `task_not_found` | `BENCHMARK_TOKEN` 无效、缺失或对应任务不存在（缺失实测为 422） |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `invalid_state` | 任务已结束（超时过期或手动停止），不允许继续操作 |
+| 409 | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
+| 503 | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
+| 500 | `internal_error` | 未预期的系统内部错误 |
 
-### 4.3 框架级验证错误
+#### 4.3 框架级验证错误
 
 当请求参数不满足基本约束时（如 `flag` 字段长度不在 1~4096 范围），FastAPI 返回 `422 Unprocessable Entity`：
 
@@ -180,20 +180,20 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 }
 ```
 
-> 此格式由框架生成，与业务异常格式不同，请注意区分。
+> 此格式由框架生成，与业务异常格式不同，应加以区分。
 
-> **增补（本仓库）**：判据——**有 `code` 字段 → 业务异常；只有 `detail` 数组 → 框架级校验错误（422）**。
+> 增补（本仓库）：判据为响应是否包含 `code` 字段。含 `code` 字段即为业务异常；仅含 `detail` 数组即为框架级校验错误（422）。
 
-> 说明：`task_not_found`（token 鉴权失败）与 `invalid_state`（任务已结束）属于所有接口的共性异常，
-> 下文各接口的「业务异常」仅额外列出该接口特有的异常，不再重复这两项。
+> 说明：`task_not_found`（token 鉴权失败）与 `invalid_state`（任务已结束）属于所有接口的共性异常。
+> 下文各接口的“业务异常”仅列出该接口特有的异常，不再重复上述两项。
 
 ---
 
-# 二、接口详情
+## 二、接口详情
 
-## 5. 接口详情
+### 5. 接口详情
 
-### 5.1 列出题目
+#### 5.1 列出题目
 
 获取当前任务关联的所有题目及作答进度。
 
@@ -201,9 +201,9 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 GET /openapi/v1/challenges
 ```
 
-**请求参数**：无（仅需 header 认证）
+请求参数：无（仅需 header 认证）
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 [
@@ -245,13 +245,13 @@ GET /openapi/v1/challenges
 | `correct_flag_count` | int | 当前已正确提交的 flag 数 |
 | `is_completed` | bool | 本题是否已全部通关 |
 | `container_status` | string | `pending`（启动中）/ `available`（已就绪，可访问）/ `stop_pending`（停止中）/ `stopped`（已停止）。尚未启动过或已关闭的题目为 `stopped` |
-| `container_addr` | array[string] | 靶场容器直连地址（IP:端口）数组，一个题目可能有多个地址；**仅当 `container_status == available` 时才有值**，其余状态一律为空数组 `[]`。需通过 VPN 直连访问 |
+| `container_addr` | array[string] | 靶场容器直连地址（IP:端口）数组，一个题目可能有多个地址；仅当 `container_status == available` 时才有值，其余状态一律为空数组 `[]`。需通过 VPN 直连访问 |
 
-**业务异常**：除共性异常（`task_not_found`、`invalid_state`）外，本接口无额外业务异常。
+业务异常：除共性异常（`task_not_found`、`invalid_state`）外，本接口无额外业务异常。
 
 ---
 
-### 5.2 启动题目容器
+#### 5.2 启动题目容器
 
 为指定题目启动靶场容器，返回容器直连地址。
 
@@ -259,13 +259,13 @@ GET /openapi/v1/challenges
 POST /openapi/v1/challenges/start?unique_code={unique_code}
 ```
 
-**请求参数**：
+请求参数：
 
 | 参数 | 位置 | 类型 | 必填 | 说明 |
 |------|------|------|------|------|
 | `unique_code` | query | string | 是 | 题目唯一标识 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -279,35 +279,35 @@ POST /openapi/v1/challenges/start?unique_code={unique_code}
 | `unique_code` | string | 题目唯一标识 |
 | `container_addr` | array[string] | 靶场容器地址（IP:端口），一个题目可能有多个地址，需通过 VPN 直连访问 |
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `invalid_state` | 当前活跃的题目实例数已达到上限，需先关闭已有题目再启动新题目 |
-| **503** | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `invalid_state` | 当前活跃的题目实例数已达到上限，需先关闭已有题目再启动新题目 |
+| 503 | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
 
-> **增补（本仓库）**：`409 invalid_state` 有两种语义，必须靠 `message` 区分：
-> 活跃数超限（message 含 `max active`，可自救：先 close 一题再重试）vs 任务已结束（不可自救，必须停止）。
+> 增补（本仓库）：`409 invalid_state` 有两种语义，必须依据 `message` 区分：
+> 活跃数超限（`message` 含 `max active`，可自行恢复：先关闭一道题目再重试）与任务已结束（不可自行恢复，必须停止）。
 
 ---
 
-### 5.3 获取提示
+#### 5.3 获取提示
 
-获取指定题目的提示信息。**注意**：查看提示后提交 flag 将按比例扣分。
+获取指定题目的提示信息。注意：查看提示后提交 flag 将按比例扣分。
 已通关的题目（所有 flag 已正确提交）不能再查看提示。
 
 ```
 GET /openapi/v1/challenges/hint?unique_code={unique_code}
 ```
 
-**请求参数**：
+请求参数：
 
 | 参数 | 位置 | 类型 | 必填 | 说明 |
 |------|------|------|------|------|
 | `unique_code` | query | string | 是 | 题目唯一标识 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -321,16 +321,16 @@ GET /openapi/v1/challenges/hint?unique_code={unique_code}
 | `unique_code` | string | 题目唯一标识 |
 | `hint` | string \| null | 提示内容，无提示时为 null |
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `invalid_state` | 该题目已通关（所有 flag 均已正确提交），不允许再查看提示 |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `invalid_state` | 该题目已通关（所有 flag 均已正确提交），不允许再查看提示 |
 
 ---
 
-### 5.4 提交 Flag
+#### 5.4 提交 Flag
 
 提交答案 flag 进行判定。
 
@@ -339,7 +339,7 @@ POST /openapi/v1/challenges/submit
 Content-Type: application/json
 ```
 
-**请求体**：
+请求体：
 
 ```json
 {
@@ -353,7 +353,7 @@ Content-Type: application/json
 | `unique_code` | string | 是 | - | 题目唯一标识 |
 | `flag` | string | 是 | 长度 1~4096 | 提交的 flag 值 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -375,19 +375,19 @@ Content-Type: application/json
 | `total_flag_count` | int | 该题 flag 总数 |
 | `matched_flag_index` | int \| null | 匹配的 flag 索引（错误时为 null） |
 
-> **增补（本仓库）**：提交错误 flag 返回 200 且 `correct: false`，不是异常；只有重复提交已正确的 flag 才是 `409 duplicate`。
+> 增补（本仓库）：提交错误 flag 返回 200 且 `correct: false`，不构成异常；仅重复提交已正确的 flag 时返回 `409 duplicate`。
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
-| **422** | （框架级验证错误） | `flag` 字段长度不在 1~4096 范围，详见 §4.3 |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
+| 422 | （框架级验证错误） | `flag` 字段长度不在 1~4096 范围，详见 §4.3 |
 
 ---
 
-### 5.5 关闭题目容器
+#### 5.5 关闭题目容器
 
 关闭并释放指定题目的靶场容器资源。
 
@@ -395,13 +395,13 @@ Content-Type: application/json
 POST /openapi/v1/challenges/close?unique_code={unique_code}
 ```
 
-**请求参数**：
+请求参数：
 
 | 参数 | 位置 | 类型 | 必填 | 说明 |
 |------|------|------|------|------|
 | `unique_code` | query | string | 是 | 题目唯一标识 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -415,21 +415,21 @@ POST /openapi/v1/challenges/close?unique_code={unique_code}
 | `unique_code` | string | 题目唯一标识 |
 | `closed` | bool | 是否成功关闭 |
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
 
 ---
 
-# TSecBench 平台使用方式（三种评测模式）
+# TSecBench 平台评测模式说明
 
-> 本文件是**实测侦察笔记**，记录 `https://tsecbench.zc.tencent.com/` 的实际使用路径与三种评测模式。
-> 抓取时间：2026-10-16。平台改版可能导致路径变化，以站内为准。
+本文档记录 `https://tsecbench.zc.tencent.com/` 的实际使用路径与三种评测模式。
+抓取时间为 2026-10-16。平台改版可能导致路径变化，以站内信息为准。
 
-平台定位：腾讯安全云鼎实验室推出的**自主 Agent 评测与验证基础设施**。
-在真实任务、真实工具与可控的动态环境中，让结果可验证、过程可追溯、能力可比较。
+平台定位：腾讯安全云鼎实验室推出的自主 Agent 评测与验证基础设施。
+该基础设施在真实任务、真实工具与可控的动态环境中运行评测，结果可验证、过程可追溯、能力可比较。
 
 ---
 
@@ -447,11 +447,11 @@ POST /openapi/v1/challenges/close?unique_code={unique_code}
 | `/agent/{id}` | 单个 Agent 的评测详情 |
 | `/#leaderboard` | 首页榜单锚点 |
 
-鉴权：站点用登录态 Cookie（腾讯云账号）。开放 API 用 `BENCHMARK_TOKEN` 请求头，**与站点 Cookie 无关**。
+鉴权：站点使用登录态 Cookie（腾讯云账号）。开放 API 使用 `BENCHMARK_TOKEN` 请求头，与站点 Cookie 无关。
 
 ---
 
-## 2. 试题集（截至 2026-10-16 可选的 4 套）
+## 2. 试题集（截至 2026-10-16 可选 4 套）
 
 | 试题集 | 题目/flag | 单次限时 | 开闭卷 | 来源 |
 |--------|-----------|----------|--------|------|
@@ -460,36 +460,37 @@ POST /openapi/v1/challenges/close?unique_code={unique_code}
 | **XBOW Validation Benchmarks** | 104 / 104 | 6h | **开卷** | XBOW 联合多家渗透厂商研发的 Web 安全基准，104 个原创 Web CTF，覆盖 20+ 类漏洞 |
 | **Cybench** | 40 / 40 | 6h | 开卷 | 斯坦福 RegLab 与 CRFM 的 AI 网络安全评估框架，论文入选 ICLR 2025 |
 
-> 实测 `Tsecbench v1` 的 `suiteId = 4`（`/benchmark/mode/4`）。其余 id 未探明，从界面点击进入即可。
+> 实测 `Tsecbench v1` 的 `suiteId = 4`（`/benchmark/mode/4`）。其余 id 尚未探明，可从界面点击进入。
 
 ---
 
-## 3. 三种评测模式（第 2 步的选择）
+## 3. 三种评测模式（第 2 步）
 
-三种模式**共用同一套试题集与排行榜体系**。路由以 `mode` 与 `evaluation_type` 两个 query 参数区分。
+三种模式共用同一套试题集与排行榜体系。路由通过 `mode` 与 `evaluation_type` 两个 query 参数区分。
 
 ### 3.1 本地模式（`mode=local`，`evaluation_type=agent`）
 
-> 定位：**开发 / 调试 Agent、评测他人程序、结果仅供自己参考。**
+适用范围：开发或调试 Agent、评测他人程序，结果仅供自己参考。
 
-- 在你自己的环境运行 Agent，通过 VPN 访问题目，与平台 API 交互完成评测。
-- 特点：**零成本接入、可本地实时调试**；**无防作弊机制，成绩仅供自己参考**。
-- 接入步骤：选 Agent → 勾选评测协议 → 点「**获取接入配置，开始评测**」→ 平台签发**唯一凭证 Token 与 Base URL** 并跳转评测页。
-- 拿到 `BENCHMARK_TOKEN` + `BENCHMARK_BASE_URL` + 靶场 VPN 后，即可走 [Challenges API](docs/challenges-api.md)。
-- **这是托管模式的前置步骤**：官方明确要求「务必先完成本地模式评测（Agent 已接入平台答题 API），再进行托管模式评测」。
+- 在自有环境中运行 Agent，通过 VPN 访问题目，并与平台 API 交互完成评测。
+- 特点：零成本接入，可在本地实时调试；无防作弊机制，成绩仅供自己参考。
+- 接入步骤：选择 Agent → 勾选评测协议 → 点击“获取接入配置，开始评测”→ 平台签发唯一凭证 Token 与 Base URL，并跳转到评测页。
+- 取得 `BENCHMARK_TOKEN`、`BENCHMARK_BASE_URL` 与靶场 VPN 后，即可调用 [Challenges API](docs/challenges-api.md)。
+- 本步骤是托管模式的前置条件：官方要求“务必先完成本地模式评测（Agent 已接入平台答题 API），再进行托管模式评测”。
 
-### 3.2 托管模式 - Agent 评测（`mode=hosted`，`evaluation_type=agent`）
+### 3.2 托管模式：Agent 评测（`mode=hosted`，`evaluation_type=agent`）
 
-> 定位：**正式打榜**。已在本地模式完成评测、想拿官方认证成绩时使用。
+适用范围：取得官方认证成绩的正式评测。用于已在本地模式完成评测、需要官方认证成绩的场景。
 
-页面标题：「环境配置，上传程序」。三步：
+页面标题为“环境配置，上传程序”，流程分为三步。
 
 **① 接入大模型网关**
-托管环境**无法访问任何公网地址**，必须把程序里所有大模型 API 地址改走平台网关：
 
-0. 先确认所用大模型 API 在《大模型 API 白名单》内（页面列 22 项）；
-1. 把**原域名加上 `.tsecbench.gw` 后缀**；
-2. 原 URL 是 `https` 的，**改成 `http`**。
+托管环境无法访问任何公网地址，程序内所有大模型 API 地址必须改为经由平台网关访问：
+
+0. 确认所用大模型 API 在《大模型 API 白名单》内（页面列 22 项）。
+1. 在原域名后添加 `.tsecbench.gw` 后缀。
+2. 原 URL 为 `https` 的，改为 `http`。
 
 ```
 转换前：https://api.deepseek.com/v1
@@ -507,30 +508,34 @@ POST /openapi/v1/challenges/close?unique_code={unique_code}
 `api.xiaomimimo.com` / `api.kimi.com` / `token.sensenova.cn` / `modelservice.jdcloud.com` / `console.cloudrouter.com.cn/v1`
 
 **② 制作并上传 Docker 镜像**
-- 上传格式：**`.tar` / `.tar.gz` / `.tgz`**，**最大 3GB**（`<input type=file accept=".tar,.gz,.tgz,.xz">`）。
+
+- 上传格式为 `.tar`、`.tar.gz` 或 `.tgz`，最大 3 GB（`<input type=file accept=".tar,.gz,.tgz,.xz">`）。
 - 导出命令：`docker save your-agent:latest | gzip > agent.tar.gz`
-- **容器启动后必须自行开始解题**（无外部触发）。
-- 可先选择已有 Agent，查看其「最近使用版本」的历次上传记录。
+- 容器启动后必须自行开始解题，无外部触发。
+- 可先选择已有 Agent，查看其“最近使用版本”的历次上传记录。
 
 **③ 配置动态环境变量**
-- **`BENCHMARK_TOKEN` 与 `BENCHMARK_BASE_URL` 由平台在任务创建后自动生成并注入容器**，无需手填；
-  你的程序内部仍通过它们调用答题 API（与本地模式一致）。
-- 其他密钥 / 大模型 API 等敏感配置**必须从程序包中剔除**，改为在此页以环境变量录入（支持「从 .env 导入」）。
+
+- `BENCHMARK_TOKEN` 与 `BENCHMARK_BASE_URL` 由平台在任务创建后自动生成并注入容器，无需手动填写；
+  程序内部仍通过这两个变量调用答题 API，与本地模式一致。
+- 其他密钥、大模型 API 等敏感配置必须从程序包中剔除，改为在此页以环境变量录入（支持“从 .env 导入”）。
 
 **评测须知（原文要点）**
-1. 平台为程序运行提供 **8 核 16G** 资源。
-2. **务必先完成本地模式评测**（Agent 已接入平台 API），再进行托管模式评测。
+
+1. 平台为程序运行提供 8 核 16G 资源。
+2. 务必先完成本地模式评测（Agent 已接入平台 API），再进行托管模式评测。
 3. 程序包内剔除动态、敏感配置，以环境变量读取并在此页配置。
-4. 托管运行期间全程数据将被**审计与部分公开**（含网络流量、大模型对话记录）。
-5. 程序运行在独立、一次性沙箱中，结束后立即销毁，平台不留存你的程序。
-6. **Agent 不可内置针对题目的历史答题记忆或解题方法，一旦发现按作弊处置。**
-- 提交后平台拉取镜像并自动部署沙箱，可在第 4 步实时查看部署 / 运行日志。
+4. 托管运行期间，全部数据将被审计并部分公开（含网络流量、大模型对话记录）。
+5. 程序运行在独立的一次性沙箱中，结束后立即销毁，平台不留存程序。
+6. Agent 不得内置针对题目的历史答题记忆或解题方法，一经发现按作弊处置。
 
-### 3.3 托管模式 - Model 基准评测（`mode=hosted`，`evaluation_type=model`）
+- 提交后平台拉取镜像并自动部署沙箱，可在第 4 步实时查看部署与运行日志。
 
-> 定位：**模型能力评测**。用平台统一 Harness，排除用户 Harness 差异，横评不同模型。
+### 3.3 托管模式：Model 基准评测（`mode=hosted`，`evaluation_type=model`）
 
-「Model 基准评测配置」，需填：
+适用范围：模型能力评测。使用平台统一 Harness，排除用户 Harness 差异，横向评测不同模型。
+
+“Model 基准评测配置”页面需填写以下字段：
 
 | 字段 | 说明 |
 |------|------|
@@ -542,26 +547,27 @@ POST /openapi/v1/challenges/close?unique_code={unique_code}
 | `LLM_DEFAULT_MODEL` * | 模型名 |
 
 评测须知：
-1. 程序在独立、一次性沙箱运行，结束即销毁，**平台不留存你的大模型 API 信息**。
-2. Model 基准评测过程（含 Agent trace、得分记录）**只有评测人自己能看到**。
-3. 首页 Model 榜单经智能清洗与加权校准后综合计算，**单人单次结果不一定影响排行榜**。
+
+1. 程序在独立的一次性沙箱中运行，结束后即销毁，平台不留存大模型 API 信息。
+2. Model 基准评测过程（含 Agent trace、得分记录）仅评测人本人可见。
+3. 首页 Model 榜单经智能清洗与加权校准后综合计算，单人单次结果不一定影响排行榜。
 
 ---
 
 ## 4. 首页公开评测研究（对比数据）
 
-首页提供「智能渗透 Agent 能力测评报告」的交互表格，字段：评测单位、评测轮次、**成功率**、答题总时间、总 Token 消耗。
+首页提供“智能渗透 Agent 能力测评报告”的交互表格，字段包括：评测单位、评测轮次、成功率、答题总时间、总 Token 消耗。
 覆盖 Agent：BreachWeave、CHYing、Cairn、Claude Code、CyberStrikeAI、LuaN1ao、Pentagi、PentestAgent、T3MP3ST、cai、ctfSolver、pi、shannon。
 覆盖模型：deepseek-v4-pro-202606、glm-5.2、kimi-k3、minimax-m3。共 156 条记录。
 
-评测说明（原文要点）：单题依次评测、每题独立运行；**每题最长运行 1 小时，超时视为未通过**；
+评测说明（原文要点）：单题依次评测，每题独立运行；每题最长运行 1 小时，超时视为未通过；
 统一评测环境、统一配置、统一评分规则，排除调度策略与答题顺序影响；后续逐步公开完整评测日志与大模型对话记录。
 
 ---
 
 ## 5. 赛事：第三届腾讯云智能攻防挑战赛（王座协议主赛场）
 
-来源：`https://zc.tencent.com/hackathon` 与平台 `/events` 页。**这是本仓库队友当前要打的比赛。**
+来源：`https://zc.tencent.com/hackathon` 与平台 `/events` 页。本仓库团队当前参加该赛事。
 
 ### 5.1 赛程
 
@@ -575,48 +581,48 @@ POST /openapi/v1/challenges/close?unique_code={unique_code}
 线下地点：深圳国际会展中心·北登录大厅 2F 媒体中心。
 主赛总奖金 32 万元（一等奖 7 万 ×1、二等奖 5 万 ×2、三等奖 3 万 ×3、优秀奖 1 万 ×6）。
 
-### 5.2 线上初赛规则（**决定实现方式，务必遵守**）
+### 5.2 线上初赛规则（决定实现方式，必须遵守）
 
-- **仅支持「托管模式 - Agent 评测」**，创建评测任务时选择本活动题集参赛。
-- 活动期间**只有 1 次评测机会**，且**仅报名队伍的队长账号**可提交评测。
-- 比赛期间若因 Agent 程序异常导致未能正常解题，**没有重试机会**——所以必须提前用其他题集跑通托管模式。
-- 题目 **50 题 / 100 flag**，评测任务**限时 8 小时**，**题目无 hint**（hint 接口返回 `null`，且查看无惩罚）。
-- 排名按 **得分 → 有效耗时 → token 量** 优先顺序。
+- 仅支持“托管模式 - Agent 评测”，创建评测任务时选择本活动题集参赛。
+- 活动期间仅有 1 次评测机会，且仅报名队伍的队长账号可提交评测。
+- 比赛期间若因 Agent 程序异常导致未能正常解题，没有重试机会。因此必须提前用其他题集验证托管模式。
+- 题目为 50 题、100 flag，评测任务限时 8 小时，题目无 hint（hint 接口返回 `null`，查看无惩罚）。
+- 排名按“得分 → 有效耗时 → token 量”的优先顺序确定。
 - 活动截止后不可创建新任务；截止前已创建的任务（排队中/部署中/运行中）可继续运行至结束并计入成绩。
-- **本活动不开放运行细节**：不可查看运行日志和 AgentTrace。
+- 本活动不开放运行细节，不可查看运行日志和 AgentTrace。
 - 各评测任务独立计分（无一血、无得分递减机制）。
-- 评测期间所选模型服务若出现限流、超时、中断或第三方故障，**不视为平台异常，不补发评测机会**。
-- **严禁主观攻击平台，或预设引导 AI 攻击评测平台的提示词。违规取消成绩及参赛资格。**
+- 评测期间所选模型服务若出现限流、超时、中断或第三方故障，不视为平台异常，不补发评测机会。
+- 严禁主观攻击平台，或预设引导 AI 攻击评测平台的提示词。违规者取消成绩及参赛资格。
 
-### 5.3 对我们的直接含义
+### 5.3 对本仓库实现的影响
 
-1. 交付物是**一个 Docker 镜像**（`.tar.gz` ≤3GB，`docker save` 导出），容器启动即自动解题。
-2. 镜像内**不能有公网访问**；所有大模型调用必须走 `http://<域名>.tsecbench.gw`。
-3. `BENCHMARK_TOKEN` / `BENCHMARK_BASE_URL` 由平台注入，程序从环境变量读取。
-4. 敏感信息以环境变量录入，不写进镜像。
-5. 不能内置题目记忆/解题方法库。
-6. **必须在赛前用本地模式 + 其他题集的托管模式验证整条链路**——正式赛只有一次机会。
-7. 无 hint，所以 hint 逻辑在赛中无用；但本地调试时可能有用（会扣分）。
+1. 交付物为一个 Docker 镜像（`.tar.gz`，≤3GB，使用 `docker save` 导出），容器启动后即自动解题。
+2. 镜像内不能有公网访问；所有大模型调用必须经由 `http://<域名>.tsecbench.gw`。
+3. `BENCHMARK_TOKEN` 与 `BENCHMARK_BASE_URL` 由平台注入，程序从环境变量读取。
+4. 敏感信息以环境变量录入，不写入镜像。
+5. 不得内置题目记忆或解题方法库。
+6. 必须在赛前使用本地模式与其他题集的托管模式验证完整链路，正式赛只有一次机会。
+7. 题目无 hint，因此 hint 逻辑在赛中无用；本地调试时可能有用，但会扣分。
 
 ---
 
-## 6. 其他赛道（同一赛事，非主赛）
+## 6. 其他赛道（同一赛事的非主赛赛道）
 
-- **安全智子专项挑战赛**：本地模型离线运行，检验 Agent 在 NVIDIA DGX Spark 上的自主渗透能力。
+- 安全智子专项挑战赛：本地模型离线运行，检验 Agent 在 NVIDIA DGX Spark 上的自主渗透能力。
   不调用云端大模型；通过材料评审遴选 8 支战队，每队配 2 台 DGX Spark；报名截止 2026-10-18 23:59。
-- **智能漏洞挖掘挑战赛**：面向授权真实业务资产，以有效漏洞与过程记录证明 AI 实战贡献。
+- 智能漏洞挖掘挑战赛：面向授权真实业务资产，以有效漏洞与过程记录证明 AI 实战贡献。
   需腾讯安全众测平台实名认证 → 申请获准 → 按要求接入。项目开放 10/10–10/26，测试及报告提交 10/12–10/26。
-  有效漏洞赏金 + 符合规则的 AI 贡献额外 **30%** 加成，附加赏金池 30 万元。
+  有效漏洞赏金，以及符合规则的 AI 贡献额外 30% 的加成；附加赏金池 30 万元。
 
 ---
 
-# tsec-benchmark SDK 接入文档（Python）
+# tsec-benchmark Python SDK 接入文档
 
-> Python SDK，用于对接 TSec Benchmark 平台的评测 API。让基于 Python 的被测 Agent 能够驱动 Benchmark 流程
-> ——列出题目、启动容器、获取提示、提交 flag、关闭容器——无需手写 HTTP 请求代码。
-> （此 SDK 仅涵盖 Agent 视角流程——它不会创建 Benchmark 任务或连接 VPN）
->
-> 来源：平台首页「接入指引 → SDK 接入 → 查看接入文档」（官方文档，2026-10-16 抓取）。
+Python SDK 用于对接 TSec Benchmark 平台的评测 API。基于 Python 的被测 Agent 可通过该 SDK 驱动 Benchmark 流程，
+包括列出题目、启动容器、获取提示、提交 flag 与关闭容器，无需手写 HTTP 请求代码。
+该 SDK 仅涵盖 Agent 视角的流程，不创建 Benchmark 任务，也不连接 VPN。
+
+来源：平台首页“接入指引 → SDK 接入 → 查看接入文档”（官方文档，2026-10-16 抓取）。
 
 ```bash
 pip install tsec-benchmark
@@ -624,27 +630,27 @@ pip install tsec-benchmark
 
 - Python ≥ 3.9
 - 依赖：`httpx`
-- 优先支持异步，同时为脚本提供了同步封装
+- 以异步方式为主，同时为脚本提供同步封装
 
 ## 前置条件
 
-在使用此 SDK 之前，你必须已经从平台获取：
+使用此 SDK 前，你必须先从平台获取以下信息：
 
 - `BENCHMARK_TOKEN`：跑分任务的凭证
 - `BENCHMARK_BASE_URL`：跑分 API 的 BASE_URL（例如 `https://benchmark.example.com`）
 - 必须已连接靶场环境 VPN（用于访问题目容器地址）
 
-以上配置，在 TSecBench 平台创建跑分任务后下发。
+以上配置由 TSecBench 平台在创建跑分任务后下发。
 
 ## 快速开始
 
-快速开始示例提供最简化的跑分模板，您只需在 `call_your_agent` 中对接您的 agent 解题逻辑即可；
-如果有其他自定义需求，可自行修改跑分流程。
+快速开始示例提供最简化的跑分模板。你只需在 `call_your_agent` 中对接 Agent 的解题逻辑；
+如有其他自定义需求，可自行修改跑分流程。
 
-> **注意**：运行程序之前，确保您的运行环境已经连接跑分任务下发的 VPN 配置，
-> 否则 SDK 将会抛出 `VpnCheckError`，无法开始跑分。
+> 注意：运行程序之前，必须确保运行环境已连接跑分任务下发的 VPN 配置，
+> 否则 SDK 将抛出 `VpnCheckError`，无法开始跑分。
 
-### 同步方式（最简单）
+### 同步方式
 
 ```python
 import os
@@ -736,7 +742,7 @@ asyncio.run(main())
 
 ## 数据类
 
-SDK 的每个方法会返回一个不可变（frozen）的数据类，字段信息如下。
+SDK 的每个方法返回一个不可变（frozen）数据类，字段信息如下。
 
 ### `Challenge`
 
@@ -808,7 +814,7 @@ VPN 连通性检测结果数据类，由 `check_vpn()` 返回，或在上下文�
 
 ## 错误处理
 
-每个平台错误码都会抛出专用的异常（所有异常都继承自 `TSecError`，包含 `.code`、`.message`、`.detail`、`.status_code` 属性）：
+每个平台错误码都会抛出专用异常。所有异常均继承自 `TSecError`，并包含 `.code`、`.message`、`.detail`、`.status_code` 属性：
 
 | 平台 code | 异常 | HTTP 状态码 |
 |-----------|------|-------------|
@@ -851,15 +857,14 @@ except TSecError:
 
 ## CLI 冒烟测试
 
-安装包时会附带一个小型 CLI 工具，用于快速连通性检查：
+安装包附带一个小型 CLI 工具，用于快速连通性检查：
 
 ```bash
 tsec-run --base-url https://benchmark.example.com --token <BENCHMARK_TOKEN>
 # 或通过环境变量：TSEC_BASE_URL / TSEC_TOKEN
 ```
 
-它会列出任务的题目及每题的 flag 进度——在将 SDK 接入你的 Agent 之前，
-可以用它来确认你的 token 和 base URL 是否正常工作。
+该工具列出任务的题目及每题 flag 进度。在将 SDK 接入 Agent 之前，可用它确认 token 与 base URL 是否正常工作。
 
 ---
 

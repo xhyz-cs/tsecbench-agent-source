@@ -1,29 +1,29 @@
-# TSecBench Challenges API 接入文档
+# TSecBench Challenges API 接入指南
 
 > 本文档面向通过 AI Agent 程序调用 TSec Benchmark Platform 评测接口的开发者或 Coding Agent。
 >
-> 文档分为「总览」与「接口详情」两部分：
-> - **总览**（§1~§4）：认证方式、接口列表与调用流程、注意事项、统一异常处理。
-> - **接口详情**（§5）：逐个介绍每个接口的请求/响应及其专属业务异常。
+> 文档分为“总览”与“接口详情”两部分：
+> - 总览（§1~§4）：认证方式、接口列表与调用流程、注意事项、统一异常处理。
+> - 接口详情（§5）：逐一说明各接口的请求、响应及其专属业务异常。
 
-来源：`https://tsecbench.zc.tencent.com/` 首页「评测服务 API 文档」面板（平台官方文档，2026-10-16 抓取）。
-本文件**结构忠实于官方文档**；标注「**增补**」的内容为本仓库补充，**非官方原文**（共 3 处：§4.3、§5.2、§5.4），其余正文为官方文档内容。
-与官方文档不一致的实测行为集中列在 §0，正文对应处以「实测」标注。
+来源：`https://tsecbench.zc.tencent.com/` 首页“评测服务 API 文档”面板（平台官方文档，2026-10-16 抓取）。
+本文档的结构与官方文档保持一致。标注为“增补”的内容由本仓库补充，不属于官方原文（共 3 处：§4.3、§5.2、§5.4）；其余正文为官方文档内容。
+与官方文档不一致的实测行为集中列于 §0，正文对应位置以“实测”标注。
 
 ---
 
 ## 0. 实测校准（官方文档之外的补充）
 
-以下结论由本仓库对线上服务的真实探测得出，**与官方文档描述不一致**，实现时必须按实测行为处理：
+以下结论由本仓库对线上服务的实际探测得出，与官方文档的描述不一致。实现时必须按实测行为处理：
 
 | 场景 | 官方文档 | 实测（2026-10-16） |
 |------|----------|--------------------|
-| 请求**缺少** `BENCHMARK_TOKEN` 请求头 | 「若 token 无效或缺失，返回 `404 task_not_found`」 | **HTTP 422**，框架级校验错误：`{"detail":[{"type":"missing","loc":["header","BENCHMARK_TOKEN"],"msg":"Field required","input":null}]}` |
-| 请求带**无效** token | `404 task_not_found` | HTTP 404 `{"code":"task_not_found","message":"invalid or unknown benchmark token","detail":{}}` ✅ 一致 |
-| OpenAPI schema | —— | `/openapi/openapi.json`、`/openapi/docs` 均 **404**，平台不暴露 schema |
-| API 承载主机 | `<platform-host>` | 与站点**同源**：`https://tsecbench.zc.tencent.com` |
+| 请求缺少 `BENCHMARK_TOKEN` 请求头 | “若 token 无效或缺失，返回 `404 task_not_found`” | HTTP 422，框架级校验错误：`{"detail":[{"type":"missing","loc":["header","BENCHMARK_TOKEN"],"msg":"Field required","input":null}]}` |
+| 请求带无效 token | `404 task_not_found` | HTTP 404 `{"code":"task_not_found","message":"invalid or unknown benchmark token","detail":{}}`，一致 |
+| OpenAPI schema | —— | `/openapi/openapi.json`、`/openapi/docs` 均 404，平台不暴露 schema |
+| API 承载主机 | `<platform-host>` | 与站点同源：`https://tsecbench.zc.tencent.com` |
 
-**复现方式**（2026-10-16 实测；下列命令不消耗题目名额，也不需要有效 token）：
+复现方式（2026-10-16 实测；下列命令不消耗题目名额，也不需要有效 token）：
 
 ```bash
 # ① 缺少 BENCHMARK_TOKEN 头 → HTTP 422，body 为 FastAPI detail 数组：
@@ -39,27 +39,27 @@ curl -s -o /dev/null -w '%{http_code}\n' https://tsecbench.zc.tencent.com/openap
 curl -s -o /dev/null -w '%{http_code}\n' https://tsecbench.zc.tencent.com/openapi/docs
 ```
 
-上述请求全部直接打到站点域名即命中平台 API，这也正是「API 与站点同源」的依据——不需要另找 API 域名。
-本仓库没有真实 `BENCHMARK_TOKEN`，因此**只验证了鉴权失败路径与 schema 暴露情况**；接口成功响应与业务错误分流仍来自官方文档 + 离线 mock（见仓库 README 的「资料出处与可信度」一节）。
+上述请求均直接指向站点域名即可命中平台 API，这是“API 与站点同源”的依据，无需另行查找 API 域名。
+本仓库没有真实 `BENCHMARK_TOKEN`，因此仅验证了鉴权失败路径与 schema 暴露情况；接口成功响应与业务错误分流仍来自官方文档与离线 mock（见本仓库 README 的“资料出处与可信度”一节）。
 
-实现建议：**缺失 token 与无效 token 要分别处理**。前者是 422（无 `code` 字段，结构为 FastAPI `detail` 数组），后者是 404 `task_not_found`。
-不要用 `code == "task_not_found"` 作为「未配置 token」的判据——那会漏掉 422。
-
----
-
-## 使用须知
-
-在使用本 API 之前，你必须完成以下步骤：
-
-1. 获取 `BENCHMARK_BASE_URL` 和 `BENCHMARK_TOKEN` 配置信息。（在 TSecBench 平台创建跑分任务后下发）
-2. 连接靶场 VPN。所有题目入口地址，必须在连接靶场环境 VPN 后才可访问，否则将无法解题拿到答案。
-   （靶场 VPN、`BENCHMARK_BASE_URL`、`BENCHMARK_TOKEN` 一起在 TSecBench 平台创建跑分任务后下发）
+实现建议：缺失 token 与无效 token 应分别处理。前者为 422（无 `code` 字段，结构为 FastAPI `detail` 数组），后者为 404 `task_not_found`。
+不得将 `code == "task_not_found"` 作为“未配置 token”的判据，否则会漏掉 422。
 
 ---
 
-# 一、总览
+## 使用前提
 
-## 1. 认证方式
+使用本 API 前，你必须完成以下步骤：
+
+1. 获取 `BENCHMARK_BASE_URL` 和 `BENCHMARK_TOKEN` 配置信息（在 TSecBench 平台创建跑分任务后下发）。
+2. 连接靶场 VPN。所有题目入口地址必须在连接靶场环境 VPN 后方可访问，否则无法解题并取得答案。
+   （靶场 VPN、`BENCHMARK_BASE_URL`、`BENCHMARK_TOKEN` 均在 TSecBench 平台创建跑分任务后一并下发）
+
+---
+
+## 一、总览
+
+### 1. 认证方式
 
 所有 `/openapi/v1/challenges/*` 接口通过 HTTP 请求头 `BENCHMARK_TOKEN` 进行鉴权。
 
@@ -75,11 +75,11 @@ Host: <platform-host>
 BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
 
-> 若 token **无效**，返回 `404 task_not_found`；若 token **缺失**，实测返回 `422`（见 §0）。
+> 若 token 无效，返回 `404 task_not_found`；若 token 缺失，实测返回 `422`（见 §0）。
 
 ---
 
-## 2. 接口列表与调用流程
+### 2. 接口列表与调用流程
 
 下表列出全部接口；序号即推荐的标准调用顺序。
 
@@ -103,28 +103,28 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 ```
 
 - 步骤 2-6 可对每道题目重复执行。
-- 同一时间，**最多只能启动 3 道题目**。
-- 一道题可能有多个 flag（`flag_count`），需多次 `submit`。
-- 查看 hint 后提交会按 `hint_cost_radio` 比例扣减该题得分。
-- 已通关（所有 flag 全部正确提交）的题目不能再查看提示。
+- 同一时间最多只能启动 3 道题目。
+- 一道题可能有多个 flag（`flag_count`），需多次调用 `submit`。
+- 查看 hint 后提交，将按 `hint_cost_radio` 比例扣减该题得分。
+- 已通关（所有 flag 均已正确提交）的题目不能查看提示。
 
 ---
 
-## 3. 注意事项
+### 3. 注意事项
 
-1. **VPN 连接**：启动题目后返回的 `container_addr` 需要通过 SSLVPN 直连，确保 VPN 已连接再访问靶场。
-2. **超时机制**：跑分任务有总时限，超时后所有接口将返回 `invalid_state` 错误。
-3. **提示扣分**：调用 hint 接口后，该题后续 flag 得分按比例扣减（具体比例由题目配置决定）。
-4. **幂等性**：同一 flag 重复提交不会重复加分，第二次会返回 `duplicate` 错误。
-5. **资源释放**：完成答题后务必调用 close 接口释放容器资源。
+1. VPN 连接：启动题目后返回的 `container_addr` 需通过 SSLVPN 直连，访问靶场前应确认 VPN 已连接。
+2. 超时机制：跑分任务有总时限，超时后所有接口均返回 `invalid_state` 错误。
+3. 提示扣分：调用 hint 接口后，该题后续 flag 得分按比例扣减（具体比例由题目配置决定）。
+4. 幂等性：同一 flag 重复提交不会重复加分，第二次提交返回 `duplicate` 错误。
+5. 资源释放：完成答题后必须调用 close 接口释放容器资源。
 
 ---
 
-## 4. 异常处理
+### 4. 异常处理
 
-本节只介绍**统一的响应结构与通用错误码**。各接口的专属业务异常请见对应的接口详情小节（§5）。
+本节仅说明统一的响应结构与通用错误码。各接口的专属业务异常，见对应的接口详情小节（§5）。
 
-### 4.1 统一错误响应格式
+#### 4.1 统一错误响应格式
 
 所有业务异常均返回以下 JSON 结构：
 
@@ -142,18 +142,18 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 | `message` | string | 错误描述信息 |
 | `detail` | object | 附加详情（通常为空对象） |
 
-### 4.2 通用错误码一览
+#### 4.2 通用错误码一览
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `task_not_found` | `BENCHMARK_TOKEN` 无效、缺失或对应任务不存在（**缺失实测为 422**） |
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `invalid_state` | 任务已结束（超时过期或手动停止），不允许继续操作 |
-| **409** | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
-| **503** | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
-| **500** | `internal_error` | 未预期的系统内部错误 |
+| 404 | `task_not_found` | `BENCHMARK_TOKEN` 无效、缺失或对应任务不存在（缺失实测为 422） |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `invalid_state` | 任务已结束（超时过期或手动停止），不允许继续操作 |
+| 409 | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
+| 503 | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
+| 500 | `internal_error` | 未预期的系统内部错误 |
 
-### 4.3 框架级验证错误
+#### 4.3 框架级验证错误
 
 当请求参数不满足基本约束时（如 `flag` 字段长度不在 1~4096 范围），FastAPI 返回 `422 Unprocessable Entity`：
 
@@ -169,20 +169,20 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 }
 ```
 
-> 此格式由框架生成，与业务异常格式不同，请注意区分。
+> 此格式由框架生成，与业务异常格式不同，应加以区分。
 
-> **增补（本仓库）**：判据——**有 `code` 字段 → 业务异常；只有 `detail` 数组 → 框架级校验错误（422）**。
+> 增补（本仓库）：判据为响应是否包含 `code` 字段。含 `code` 字段即为业务异常；仅含 `detail` 数组即为框架级校验错误（422）。
 
-> 说明：`task_not_found`（token 鉴权失败）与 `invalid_state`（任务已结束）属于所有接口的共性异常，
-> 下文各接口的「业务异常」仅额外列出该接口特有的异常，不再重复这两项。
+> 说明：`task_not_found`（token 鉴权失败）与 `invalid_state`（任务已结束）属于所有接口的共性异常。
+> 下文各接口的“业务异常”仅列出该接口特有的异常，不再重复上述两项。
 
 ---
 
-# 二、接口详情
+## 二、接口详情
 
-## 5. 接口详情
+### 5. 接口详情
 
-### 5.1 列出题目
+#### 5.1 列出题目
 
 获取当前任务关联的所有题目及作答进度。
 
@@ -190,9 +190,9 @@ BENCHMARK_TOKEN: a1b2c3d4-e5f6-7890-abcd-ef1234567890
 GET /openapi/v1/challenges
 ```
 
-**请求参数**：无（仅需 header 认证）
+请求参数：无（仅需 header 认证）
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 [
@@ -234,13 +234,13 @@ GET /openapi/v1/challenges
 | `correct_flag_count` | int | 当前已正确提交的 flag 数 |
 | `is_completed` | bool | 本题是否已全部通关 |
 | `container_status` | string | `pending`（启动中）/ `available`（已就绪，可访问）/ `stop_pending`（停止中）/ `stopped`（已停止）。尚未启动过或已关闭的题目为 `stopped` |
-| `container_addr` | array[string] | 靶场容器直连地址（IP:端口）数组，一个题目可能有多个地址；**仅当 `container_status == available` 时才有值**，其余状态一律为空数组 `[]`。需通过 VPN 直连访问 |
+| `container_addr` | array[string] | 靶场容器直连地址（IP:端口）数组，一个题目可能有多个地址；仅当 `container_status == available` 时才有值，其余状态一律为空数组 `[]`。需通过 VPN 直连访问 |
 
-**业务异常**：除共性异常（`task_not_found`、`invalid_state`）外，本接口无额外业务异常。
+业务异常：除共性异常（`task_not_found`、`invalid_state`）外，本接口无额外业务异常。
 
 ---
 
-### 5.2 启动题目容器
+#### 5.2 启动题目容器
 
 为指定题目启动靶场容器，返回容器直连地址。
 
@@ -248,13 +248,13 @@ GET /openapi/v1/challenges
 POST /openapi/v1/challenges/start?unique_code={unique_code}
 ```
 
-**请求参数**：
+请求参数：
 
 | 参数 | 位置 | 类型 | 必填 | 说明 |
 |------|------|------|------|------|
 | `unique_code` | query | string | 是 | 题目唯一标识 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -268,35 +268,35 @@ POST /openapi/v1/challenges/start?unique_code={unique_code}
 | `unique_code` | string | 题目唯一标识 |
 | `container_addr` | array[string] | 靶场容器地址（IP:端口），一个题目可能有多个地址，需通过 VPN 直连访问 |
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `invalid_state` | 当前活跃的题目实例数已达到上限，需先关闭已有题目再启动新题目 |
-| **503** | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `invalid_state` | 当前活跃的题目实例数已达到上限，需先关闭已有题目再启动新题目 |
+| 503 | `resource_unavailable` | 靶场资源不可用（实例未就绪或已耗尽） |
 
-> **增补（本仓库）**：`409 invalid_state` 有两种语义，必须靠 `message` 区分：
-> 活跃数超限（message 含 `max active`，可自救：先 close 一题再重试）vs 任务已结束（不可自救，必须停止）。
+> 增补（本仓库）：`409 invalid_state` 有两种语义，必须依据 `message` 区分：
+> 活跃数超限（`message` 含 `max active`，可自行恢复：先关闭一道题目再重试）与任务已结束（不可自行恢复，必须停止）。
 
 ---
 
-### 5.3 获取提示
+#### 5.3 获取提示
 
-获取指定题目的提示信息。**注意**：查看提示后提交 flag 将按比例扣分。
+获取指定题目的提示信息。注意：查看提示后提交 flag 将按比例扣分。
 已通关的题目（所有 flag 已正确提交）不能再查看提示。
 
 ```
 GET /openapi/v1/challenges/hint?unique_code={unique_code}
 ```
 
-**请求参数**：
+请求参数：
 
 | 参数 | 位置 | 类型 | 必填 | 说明 |
 |------|------|------|------|------|
 | `unique_code` | query | string | 是 | 题目唯一标识 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -310,16 +310,16 @@ GET /openapi/v1/challenges/hint?unique_code={unique_code}
 | `unique_code` | string | 题目唯一标识 |
 | `hint` | string \| null | 提示内容，无提示时为 null |
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `invalid_state` | 该题目已通关（所有 flag 均已正确提交），不允许再查看提示 |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `invalid_state` | 该题目已通关（所有 flag 均已正确提交），不允许再查看提示 |
 
 ---
 
-### 5.4 提交 Flag
+#### 5.4 提交 Flag
 
 提交答案 flag 进行判定。
 
@@ -328,7 +328,7 @@ POST /openapi/v1/challenges/submit
 Content-Type: application/json
 ```
 
-**请求体**：
+请求体：
 
 ```json
 {
@@ -342,7 +342,7 @@ Content-Type: application/json
 | `unique_code` | string | 是 | - | 题目唯一标识 |
 | `flag` | string | 是 | 长度 1~4096 | 提交的 flag 值 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -364,19 +364,19 @@ Content-Type: application/json
 | `total_flag_count` | int | 该题 flag 总数 |
 | `matched_flag_index` | int \| null | 匹配的 flag 索引（错误时为 null） |
 
-> **增补（本仓库）**：提交错误 flag 返回 200 且 `correct: false`，不是异常；只有重复提交已正确的 flag 才是 `409 duplicate`。
+> 增补（本仓库）：提交错误 flag 返回 200 且 `correct: false`，不构成异常；仅重复提交已正确的 flag 时返回 `409 duplicate`。
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
-| **409** | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
-| **422** | （框架级验证错误） | `flag` 字段长度不在 1~4096 范围，详见 §4.3 |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 409 | `duplicate` | 同一个 flag（相同 flag_index）被重复正确提交，幂等保护 |
+| 422 | （框架级验证错误） | `flag` 字段长度不在 1~4096 范围，详见 §4.3 |
 
 ---
 
-### 5.5 关闭题目容器
+#### 5.5 关闭题目容器
 
 关闭并释放指定题目的靶场容器资源。
 
@@ -384,13 +384,13 @@ Content-Type: application/json
 POST /openapi/v1/challenges/close?unique_code={unique_code}
 ```
 
-**请求参数**：
+请求参数：
 
 | 参数 | 位置 | 类型 | 必填 | 说明 |
 |------|------|------|------|------|
 | `unique_code` | query | string | 是 | 题目唯一标识 |
 
-**成功响应** `200`：
+成功响应 `200`：
 
 ```json
 {
@@ -404,8 +404,8 @@ POST /openapi/v1/challenges/close?unique_code={unique_code}
 | `unique_code` | string | 题目唯一标识 |
 | `closed` | bool | 是否成功关闭 |
 
-**业务异常**：
+业务异常：
 
 | HTTP 状态码 | code | 触发场景 |
 |-------------|------|----------|
-| **404** | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |
+| 404 | `challenge_not_found` | `unique_code` 不存在于当前任务的用例集中 |

@@ -5,8 +5,9 @@
 //   node build/assemble-llms-full.mjs
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const repo = 'D:/tmp/secbench.zc.tencent.com';
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const enc = 'utf8';
 
 const header = fs.readFileSync(path.join(repo, 'build/llms-full-header.md'), enc);

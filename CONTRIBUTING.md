@@ -45,6 +45,9 @@ or to request features — open a pull request instead.
 5. **Declare authorship.** By opening a pull request you confirm that you have the
    right to submit the contribution and that it may be distributed under this
    repository's Apache-2.0 license.
+6. **Follow the documentation style guide.** Prose changes MUST follow
+   `docs/style-guide.md` (terminology, punctuation, normative language, and the
+   document-class rules).
 
 ## Pull-request process
 
@@ -100,6 +103,7 @@ fallback.
    `REUSE.toml`，且 `reuse lint` 必须通过。
 4. 不得提交密钥或真实 `.env`。
 5. 提交 PR 即表示你有权贡献该内容，并同意其按本仓库 Apache-2.0 许可分发。
+6. 文档改动必须遵循 `docs/style-guide.md`（术语、标点、规范性用语与文档分类规则）。
 
 **执行机制：**当前私有仓库套餐不支持 GitHub 分支保护与 Rulesets（API 返回需要升级
 Pro/Team 或公开仓库），因此暂以仓库内 `.githooks/pre-push` 钩子执行。每个克隆执行
