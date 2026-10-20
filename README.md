@@ -4,7 +4,7 @@
 **School / 学校:** Jiangmen Xinhui No. 1 Middle School / 江门市新会第一中学  
 **Repository purpose / 仓库用途:** Uncompiled source for the TSecBench hosted Agent image; this repository is private.
 
-**License / 许可证:** Apache License 2.0 for the original project contributions (`LICENSE`); third-party files remain subject to their own licenses and notices.
+**License / 许可证:** Apache License 2.0 for the original project contributions (`LICENSE`, `NOTICE`); third-party files remain subject to their own licenses and notices (`THIRD-PARTY-NOTICES.md`).
 
 ## 中文
 
@@ -107,6 +107,30 @@ Use `.env.example` as a template and keep any real local `.env` out of version c
 - `skills/` — Skill catalog, indexes, and reference material.
 - `docs/` — Platform API, modes, SDK, and Agent prompt documentation.
 - `build/` — Documentation and configuration-scan helper scripts.
+
+## License
+
+The original project contributions — `mcp/`, `docker/`, `build/`, `plugin/`, `docs/`, the in-house skills under `skills/kit/` with their methodology notes, and the project documentation — are Copyright 2026 James and minc and licensed under the **Apache License 2.0** (`LICENSE`). Attribution notices are in `NOTICE`.
+
+Everything vendored from third parties keeps its upstream license:
+
+- The skill library under `skills/` aggregates nine public collections plus a PayloadsAllTheThings snapshot. Per-source licenses, pinned commits, and per-directory evidence are inventoried in `THIRD-PARTY-NOTICES.md`; any directory that ships its own `LICENSE` file is governed by that file.
+- Pinned tool releases (`docker/tools/releases/`): Nikto 2.6.1 is redistributed unmodified under its upstream terms; Ghidra and JADX are Apache-2.0 and are not committed to this repository.
+- Build-time dependencies (Debian packages, Python packages, npm packages) are installed by `docker/Dockerfile` and carry their own licenses.
+
+**Compliance note:** `skills/pdf` is included under Anthropic's proprietary terms (`skills/pdf/LICENSE.txt`), which prohibit retaining, reproducing, or redistributing the material outside Anthropic's services. It must be removed before this repository or the built image is published. See "Compliance flags" in `THIRD-PARTY-NOTICES.md`.
+
+### 许可证（中文）
+
+本项目原创内容——`mcp/`、`docker/`、`build/`、`plugin/`、`docs/`、`skills/kit/` 下的自研技能与方法论文档，以及项目文档——由 James 与 minc 版权所有（2026），采用 **Apache License 2.0**（`LICENSE`），署名声明见 `NOTICE`。
+
+第三方内容保留其上游许可证：
+
+- `skills/` 技能库汇集了 9 个公开仓库与 PayloadsAllTheThings 快照；各来源的许可证、固定 commit 与逐目录证据见 `THIRD-PARTY-NOTICES.md`（英文）；自带 `LICENSE` 的目录以该文件为准。
+- 固定版本工具包（`docker/tools/releases/`）：Nikto 2.6.1 按上游条款原样再分发；Ghidra 与 JADX 为 Apache-2.0，且未纳入本仓库。
+- 构建期依赖（Debian、Python、npm 包）由 `docker/Dockerfile` 安装，各自遵循其许可证。
+
+**合规提示：** `skills/pdf` 按 Anthropic 专有条款收录（`skills/pdf/LICENSE.txt`），该条款禁止在 Anthropic 服务之外保留、复制与再分发。公开本仓库或分发构建镜像前必须移除。详见 `THIRD-PARTY-NOTICES.md` 的合规章节。
 
 ---
 

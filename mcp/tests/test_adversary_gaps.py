@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """对质 gap tests for tsecbench_mcp — 29 green tests (was 28 + 1 documented RED).
 
 Produced by the mutation-testing review (64 semantic mutants; the original

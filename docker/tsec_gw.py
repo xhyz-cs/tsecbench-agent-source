@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Validate direct HTTPS API URLs or rewrite a public model API URL for TSecBench.
 
 Direct official HTTPS API use is the default. Gateway conversion remains an

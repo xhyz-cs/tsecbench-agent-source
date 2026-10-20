@@ -1,4 +1,6 @@
 #!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 # Launch Chromium the way a container running as root needs it.
 #
 # Chromium refuses to start as root without --no-sandbox, and a container's /dev/shm

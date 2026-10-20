@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 James and minc
 // Assemble llms-full.txt from the header + docs/*.md, rewriting the docs-relative links
 // so they resolve from the repo root. Re-run after editing any docs/ file:
 //   node build/assemble-llms-full.mjs

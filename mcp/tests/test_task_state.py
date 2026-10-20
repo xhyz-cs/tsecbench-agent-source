@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Tests for tsecbench_mcp._task_state — the supervisor's stop/go verdict.
 
 `_task_state` decides whether the container works or idles, and it is the one place

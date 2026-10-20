@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Offline integrity checks for vendored reverse-engineering tool releases."""
 from pathlib import Path
 import hashlib

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 James and minc
 // Scan the Claude Code native binary for environment-variable and endpoint strings.
 // The binary is a Bun single-file executable (~271MB), so stream it in overlapping
 // chunks and collect unique matches instead of loading it whole.

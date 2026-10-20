@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Integration tests for tsecbench_mcp against the mock TSecBench API.
 
 Stdlib only (``unittest``), so it also runs inside the evaluation sandbox where

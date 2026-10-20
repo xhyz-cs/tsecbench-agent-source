@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Auto-approve every Claude Code hook decision point.
 
 Second layer of autonomy (the first is `--dangerously-skip-permissions`). This hook

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Tests for the keep_working Stop/SessionStart hook.
 
 The hook is pure logic over stdin JSON plus two files, so all of it is pinned here —

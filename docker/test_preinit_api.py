@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Offline tests for the entrypoint's pre-MCP platform API burst."""
 
 from pathlib import Path

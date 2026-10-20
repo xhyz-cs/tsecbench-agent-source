@@ -181,4 +181,14 @@ python -m unittest discover -s mcp/tests -t mcp/tests -v    # 全部集成测试
 
 ## 许可证
 
-本项目原创内容采用 Apache License 2.0，详见仓库根目录 `LICENSE`。第三方代码、技能、数据和工具仍分别遵循其自带的许可证与声明；请一并查看相应目录中的 `LICENSE`、`NOTICE` 及 `docker/tools/LICENSES-and-NOTICES.md`。
+本项目原创内容——`mcp/`、`docker/`、`build/`、`plugin/`、`docs/`、`skills/kit/` 下的自研技能与方法论文档，以及项目文档——由 James 与 minc 版权所有（2026），采用 **Apache License 2.0**（根目录 `LICENSE`），署名声明见 `NOTICE`。
+
+第三方内容保留其上游许可证：
+
+- `skills/` 技能库汇集了 9 个公开仓库与 PayloadsAllTheThings 快照。各来源的许可证、固定 commit 与逐目录证据见 `THIRD-PARTY-NOTICES.md`（英文）；自带 `LICENSE` 的目录以该文件为准。
+- 固定版本工具包（`docker/tools/releases/`）：Nikto 2.6.1 按上游条款原样再分发（代码为 GPL-3.0-only 并附附加条款；数据库文件不适用 GPL，仅限随官方包分发；内置 LibWhisker 为 BSD-2-Clause，均见包内 `COPYING`/`COPYING.LibWhisker`）；Ghidra（Apache-2.0）与 JADX（Apache-2.0）为可选包，未纳入本仓库。`docker/tools/LICENSES-and-NOTICES.md` 保留队友工具包的来源记录。
+- 构建期依赖（Debian 系统包、Python 包、npm 包）由 `docker/Dockerfile` 安装，各自遵循其许可证。
+
+**合规提示：** `skills/pdf` 按 Anthropic 专有条款收录（`skills/pdf/LICENSE.txt`），该条款禁止在 Anthropic 服务之外保留、复制与再分发。公开本仓库或分发构建镜像前必须移除。详见 `THIRD-PARTY-NOTICES.md` 的 "Compliance flags" 章节。
+
+> English: see the "License" section of `README.md` and the full inventory in `THIRD-PARTY-NOTICES.md`.

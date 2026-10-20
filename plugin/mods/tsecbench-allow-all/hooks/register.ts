@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 James and minc
 // tsecbench-allow-all — deep allow for every tool call, INSIDE THE COMPETITION CONTAINER ONLY.
 //
 // Layering, outermost to innermost:

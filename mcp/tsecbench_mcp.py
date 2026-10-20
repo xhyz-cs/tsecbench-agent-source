@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """tsecbench-mcp — a stdlib-only MCP server for the TSecBench Challenges API.
 
 WHY STDLIB-ONLY

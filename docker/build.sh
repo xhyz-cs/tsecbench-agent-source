@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 # =============================================================================
 # Build the TSecBench hosted-mode image and export it for upload.
 #

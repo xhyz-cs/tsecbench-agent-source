@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 James and minc
 // Check that every markdown link in llms.txt / README.md / mcp/README.md resolves to a
 // real file on disk (skips http(s) and anchors). Exit 1 if any local link is broken.
 import fs from 'node:fs';

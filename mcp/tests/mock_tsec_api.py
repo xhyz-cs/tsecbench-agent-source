@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Mock TSecBench "Challenges API" plus the VPN precheck endpoint.
 
 The module starts two independent HTTP servers in one process:

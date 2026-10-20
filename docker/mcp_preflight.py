@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Prove the MCP servers in a Claude Code `--mcp-config` file actually connect.
 
 Runs the exact command Claude Code will run, speaks JSON-RPC to it over stdio, and

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Keep-alive loop: one heartbeat every TSEC_KEEPALIVE_INTERVAL seconds (default 300).
 
 Started by the entrypoint at container boot, alongside the agent. Four jobs, in

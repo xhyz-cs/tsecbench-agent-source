@@ -2,6 +2,7 @@
 name: recon-and-methodology
 description: >-
   Reconnaissance and methodology playbook. Use when mapping assets, discovering endpoints, fingerprinting technology, and building a structured testing plan for a new target.
+license: Apache-2.0
 ---
 
 # SKILL: Recon and Methodology — Expert Bug Bounty Playbook

@@ -1,4 +1,6 @@
 # syntax=docker.m.daocloud.io/docker/dockerfile:1
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 # =============================================================================
 # TSecBench hosted-mode (托管模式) agent image — harness: Claude Code
 #

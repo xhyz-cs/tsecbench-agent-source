@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Keep an unattended session working: answer Claude Code's Stop with "not yet".
 
 Third layer of autonomy, after the two that answer permission questions

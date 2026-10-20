@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 James and minc
 """Fleet coordinator: run several Claude Code workers against different challenges at once.
 
 The fleet lives *outside* the harness on purpose: this process is the coordinator,

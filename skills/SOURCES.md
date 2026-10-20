@@ -1,5 +1,11 @@
 # Sources — skill provenance, screening log, reconciliation
 
+> Licensing status for every source listed here (SPDX identifiers, in-directory LICENSE
+> evidence, and compliance flags) is inventoried in
+> [`../THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md). In-house skills under
+> `kit/` are original project material licensed under Apache-2.0, not third-party
+> content.
+
 All skills under `skills/` were collected on **2026-10-16/17** from public GitHub
 repositories at the pinned commits below, file-by-file via `raw.githubusercontent.com`
 (no repo was ever cloned into this repository; the browser fetch pipeline is described

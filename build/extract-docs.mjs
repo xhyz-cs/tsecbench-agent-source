@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 James and minc
 // Extract long string literals (the bundled markdown docs) from a minified Vite chunk.
 // Usage: node extract-docs.mjs <input.js> <outdir>
 import fs from 'node:fs';
