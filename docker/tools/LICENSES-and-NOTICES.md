@@ -3,7 +3,7 @@
 > This file preserves the source/license notes that arrived with the teammate tool kit
 > (`TsecBench-Agent-Kit`). It is kept for provenance. The authoritative, repository-wide
 > inventory — skill sources, vendored releases, and the full build-time dependency
-> stack — is [`../../THIRD-PARTY-NOTICES.md`](../../THIRD-PARTY-NOTICES.md).
+> stack — is [`../../THIRD_PARTY_NOTICES.md`](../../THIRD_PARTY_NOTICES.md).
 >
 > Kit-only references below (`repositories/manifest.json`, `requirements-linux.txt`,
 > `tools/releases/SOURCES.txt`) are artifacts of the kit and are **not** part of this
@@ -53,4 +53,4 @@ its dependencies before building or redistributing.
 - Only `nikto-2.6.1.zip` (plus `SOURCES.sha256` and `README.md`) is committed here.
   Ghidra/JADX archives are optional and stay out of Git (see `.gitignore`).
 - The in-repo build-time dependency stack and its license identifiers are inventoried in
-  [`../../THIRD-PARTY-NOTICES.md`](../../THIRD-PARTY-NOTICES.md).
+  [`../../THIRD_PARTY_NOTICES.md`](../../THIRD_PARTY_NOTICES.md).

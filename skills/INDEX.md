@@ -2,7 +2,7 @@
 
 Collected from public GitHub sources on 2026-10-16/17, audited by the skill-collector
 agent. Provenance, pinned commits, and the security-screening log: see `SOURCES.md`.
-Per-source license identifiers and compliance flags: see `../THIRD-PARTY-NOTICES.md`.
+Per-source license identifiers and compliance flags: see `../THIRD_PARTY_NOTICES.md`.
 
 ## Audit summary (2026-10-17)
 

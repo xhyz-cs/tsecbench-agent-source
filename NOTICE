@@ -15,7 +15,7 @@ limitations under the License.
 
 This product includes third-party software. The full inventory, license
 identifiers, provenance, and compliance notes live in
-THIRD-PARTY-NOTICES.md. Vendored components distributed under the Apache
+THIRD_PARTY_NOTICES.md. Vendored components distributed under the Apache
 License 2.0 retain their upstream copyright notices, in particular:
 
   * Cybersecurity skill collection in skills/ — Copyright 2026 mukul975.
@@ -26,5 +26,5 @@ License 2.0 retain their upstream copyright notices, in particular:
 
 Third-party material under other licenses — MIT, GPL-2.0, LGPL-3.0,
 BSD-2-Clause, and Anthropic proprietary terms — is identified in
-THIRD-PARTY-NOTICES.md and retains its own license files where the
+THIRD_PARTY_NOTICES.md and retains its own license files where the
 upstream distribution provides them.

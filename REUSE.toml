@@ -1,0 +1,263 @@
+# REUSE.toml — machine-readable licensing metadata (REUSE Specification 3.3).
+#
+# Tables are evaluated in order. When a file is matched by more than one table,
+# the LAST matching table in this file wins (REUSE spec, section "REUSE.toml").
+# Broad defaults therefore come first; specific per-source mappings come last.
+#
+# The human-readable inventory (provenance, pinned commits, evidence) is in
+# THIRD_PARTY_NOTICES.md. License texts live in LICENSES/.
+
+version = 1
+
+# --- 1. Default: original project material ---------------------------------
+[[annotations]]
+path = ["**", "**/*"]
+SPDX-FileCopyrightText = "2026 James and minc"
+SPDX-License-Identifier = "Apache-2.0"
+
+# --- 2. Base for the vendored mukul975 collection (source #8) ---------------
+# Specific directories with different copyright lines are overridden below.
+[[annotations]]
+path = "skills/**"
+SPDX-FileCopyrightText = "2026 mukul975"
+SPDX-License-Identifier = "Apache-2.0"
+
+# --- 3. Source #1: transilienceai/communitytools (MIT) ----------------------
+[[annotations]]
+path = [
+  "skills/reconnaissance/**",
+  "skills/osint/**",
+  "skills/techstack-identification/**",
+  "skills/patt-fetcher/**",
+  "skills/cve-poc-generator/**",
+  "skills/source-code-scanning/**",
+  "skills/essential-tools/**",
+  "skills/social-engineering/**",
+  "skills/mobile-security/**",
+  "skills/ai-threat-testing/**",
+  "skills/dfir/**",
+  "skills/api-security/**",
+  "skills/infrastructure/**",
+  "skills/injection/**",
+  "skills/web-app-logic/**",
+  "skills/client-side/**",
+  "skills/server-side/**",
+  "skills/authentication/**",
+  "skills/system/**",
+  "skills/reverse-engineering/**",
+  "skills/pentest-engagement/**",
+  "skills/authenticated-session-acquisition/**",
+]
+SPDX-FileCopyrightText = "2025 Transilience AI"
+SPDX-License-Identifier = "MIT"
+
+# --- 4. Source #2: ljagiello/ctf-skills (MIT) -------------------------------
+[[annotations]]
+path = ["skills/ctf-*/**", "skills/solve-challenge/**"]
+SPDX-FileCopyrightText = "2026 Lukasz Jagiello"
+SPDX-License-Identifier = "MIT"
+
+# --- 5. Source #3: trilwu/secskills (MIT) -----------------------------------
+[[annotations]]
+path = [
+  "skills/escalating-linux-privileges/**",
+  "skills/escalating-windows-privileges/**",
+  "skills/cracking-passwords/**",
+  "skills/exploiting-cloud-platforms/**",
+  "skills/exploiting-containers/**",
+  "skills/abusing-ci-cd-oidc/**",
+  "skills/reporting-security-findings/**",
+  "skills/analyzing-binaries/**",
+  "skills/analyzing-dotnet-assemblies/**",
+  "skills/analyzing-firmware-images/**",
+  "skills/analyzing-go-binaries/**",
+  "skills/analyzing-ios-binaries/**",
+  "skills/analyzing-macos-binaries/**",
+  "skills/analyzing-rust-binaries/**",
+  "skills/devirtualizing-vm-protected-code/**",
+  "skills/diffing-binary-patches/**",
+  "skills/unpacking-protected-binaries/**",
+  "skills/reversing-network-protocols/**",
+  "skills/escaping-hardened-containers/**",
+  "skills/establishing-persistence/**",
+  "skills/transferring-files/**",
+  "skills/recognizing-deception/**",
+  "skills/exploiting-deserialization/**",
+  "skills/exploiting-memory-corruption/**",
+  "skills/exploiting-ssrf/**",
+  "skills/exploiting-xxe/**",
+  "skills/attacking-jwt/**",
+  "skills/attacking-graphql/**",
+  "skills/attacking-oauth-oidc/**",
+  "skills/attacking-saml/**",
+  "skills/attacking-eks-gke-aks/**",
+  "skills/attacking-entra-id/**",
+  "skills/attacking-kerberos-delegation/**",
+  "skills/attacking-serverless/**",
+  "skills/testing-web-applications/**",
+  "skills/testing-apis/**",
+  "skills/enumerating-network-services/**",
+  "skills/performing-reconnaissance/**",
+]
+SPDX-FileCopyrightText = "2025 Tri Luu"
+SPDX-License-Identifier = "MIT"
+
+# --- 6. Source #4: ADScanPro/Claude-AD (MIT) --------------------------------
+[[annotations]]
+path = ["skills/kerberos-attacks/**", "skills/adcs-attacks/**"]
+SPDX-FileCopyrightText = "2026 ADscan"
+SPDX-License-Identifier = "MIT"
+
+# --- 7. Source #6: SnailSploit/Claude-Red (MIT) -----------------------------
+[[annotations]]
+path = [
+  "skills/offensive-sqli/**",
+  "skills/offensive-ssti/**",
+  "skills/offensive-xss/**",
+  "skills/offensive-xxe/**",
+  "skills/offensive-idor/**",
+  "skills/offensive-open-redirect/**",
+  "skills/offensive-parameter-pollution/**",
+  "skills/offensive-race-condition/**",
+  "skills/offensive-request-smuggling/**",
+  "skills/offensive-ssrf/**",
+  "skills/offensive-rce/**",
+  "skills/offensive-file-upload/**",
+  "skills/offensive-business-logic/**",
+  "skills/offensive-graphql/**",
+  "skills/offensive-deserialization/**",
+  "skills/offensive-waf-bypass/**",
+  "skills/offensive-edr-evasion/**",
+  "skills/offensive-anti-forensics/**",
+  "skills/offensive-advanced-redteam/**",
+  "skills/offensive-data-exfiltration/**",
+  "skills/offensive-lateral-movement/**",
+  "skills/offensive-persistence/**",
+  "skills/offensive-c2-frameworks/**",
+  "skills/offensive-initial-access/**",
+  "skills/offensive-cloud/**",
+  "skills/offensive-container-escape/**",
+  "skills/offensive-k8s-attacks/**",
+  "skills/exploit-regression/**",
+  "skills/offensive-exploit-dev-course/**",
+  "skills/offensive-mitigations/**",
+  "skills/offensive-toctou/**",
+  "skills/offensive-bug-identification/**",
+  "skills/offensive-fuzzing/**",
+  "skills/offensive-fuzzing-course/**",
+  "skills/offensive-vuln-classes/**",
+]
+SPDX-FileCopyrightText = "2024-2025 SnailSploit / Kai Aizen"
+SPDX-License-Identifier = "MIT"
+
+# --- 8. Source #7: securityfortech/hacking-skills, MIT-declaring skills -----
+# Upstream has no repository-level LICENSE; the license below follows each
+# skill's own frontmatter declaration. No named copyright holder is published.
+[[annotations]]
+path = [
+  "skills/auth-bypass/**",
+  "skills/default-credentials/**",
+  "skills/password-reset-flaws/**",
+  "skills/authz-bypass/**",
+  "skills/bola-idor/**",
+  "skills/path-traversal/**",
+  "skills/clickjacking/**",
+  "skills/cors-misconfig/**",
+  "skills/cspt/**",
+  "skills/csrf/**",
+  "skills/dom-xss/**",
+  "skills/cmd-injection/**",
+  "skills/http-request-smuggling/**",
+  "skills/sql-injection/**",
+  "skills/ssrf/**",
+  "skills/ssti/**",
+  "skills/xss-reflected/**",
+  "skills/xss-stored/**",
+  "skills/xxe/**",
+  "skills/business-logic-flaws/**",
+  "skills/graphql-idor-via-introspection-leak/**",
+  "skills/web-fingerprinting/**",
+  "skills/cookie-attacks/**",
+  "skills/session-fixation/**",
+]
+SPDX-FileCopyrightText = "Contributors to securityfortech/hacking-skills"
+SPDX-License-Identifier = "MIT"
+
+# --- 9. Source #7: securityfortech/hacking-skills, Apache-2.0-declaring -----
+[[annotations]]
+path = [
+  "skills/jwt-misconfig/**",
+  "skills/mass-assignment/**",
+  "skills/open-redirect/**",
+  "skills/insecure-file-upload/**",
+]
+SPDX-FileCopyrightText = "Contributors to securityfortech/hacking-skills"
+SPDX-License-Identifier = "Apache-2.0"
+
+# --- 10. Source #9: Masriyan/Claude-Code-CyberSecurity-Skill (MIT) ---------
+[[annotations]]
+path = [
+  "skills/01-recon-osint/**",
+  "skills/02-vulnerability-scanner/**",
+  "skills/03-exploit-development/**",
+  "skills/04-reverse-engineering/**",
+  "skills/05-malware-analysis/**",
+  "skills/06-threat-hunting/**",
+  "skills/07-incident-response/**",
+  "skills/08-network-security/**",
+  "skills/09-web-security/**",
+  "skills/10-cloud-security/**",
+  "skills/11-csoc-automation/**",
+  "skills/12-log-analysis/**",
+  "skills/13-crypto-analysis/**",
+  "skills/14-red-team-ops/**",
+  "skills/15-blue-team-defense/**",
+  "skills/16-ai-llm-security/**",
+  "skills/17-mobile-security/**",
+  "skills/18-ot-ics-security/**",
+  "skills/19-grc-compliance/**",
+  "skills/20-supply-chain-security/**",
+  "skills/21-threat-intelligence/**",
+  "skills/22-purple-team/**",
+]
+SPDX-FileCopyrightText = "2026 Riyan Pratama"
+SPDX-License-Identifier = "MIT"
+
+# --- 11. PayloadsAllTheThings snapshot (MIT) -------------------------------
+[[annotations]]
+path = "skills/payloadsallthethings/**"
+SPDX-FileCopyrightText = "2019 Swissky"
+SPDX-License-Identifier = "MIT"
+
+# --- 12. In-house kit skills and methodology notes (original project) ------
+[[annotations]]
+path = "skills/kit/**"
+SPDX-FileCopyrightText = "2026 James and minc"
+SPDX-License-Identifier = "Apache-2.0"
+
+# --- 13. Original skill-library documentation ------------------------------
+[[annotations]]
+path = ["skills/INDEX.md", "skills/SOURCES.md", "skills/audit-scan.json"]
+SPDX-FileCopyrightText = "2026 James and minc"
+SPDX-License-Identifier = "Apache-2.0"
+
+# --- 14. mukul975 directories with non-default copyright lines -------------
+[[annotations]]
+path = ["skills/implementing-attack-surface-management/**", "skills/performing-cloud-log-forensics-with-athena/**"]
+SPDX-FileCopyrightText = "2025 mukul975"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "skills/conducting-gdpr-compliance-assessment/**"
+SPDX-FileCopyrightText = "2026 dakshverma23"
+SPDX-License-Identifier = "Apache-2.0"
+
+# --- 15. Vendored Nikto source archive -------------------------------------
+# Verbatim upstream 2.6.1 archive. COPYING (inside the archive) states GPLv3
+# for Nikto's code with a non-GPL database-distribution restriction; the
+# bundled LibWhisker is BSD-2-Clause. The LicenseRef text is a verbatim copy
+# of the archive's COPYING.
+[[annotations]]
+path = "docker/tools/releases/nikto-2.6.1.zip"
+SPDX-FileCopyrightText = ["2001-2026 Chris Sullo", "2009 Jeff Forristal (wiretrip.net)"]
+SPDX-License-Identifier = "LicenseRef-Nikto-2.6.1 AND BSD-2-Clause"

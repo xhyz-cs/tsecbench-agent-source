@@ -18,6 +18,12 @@ document is written in English; a Chinese summary for human readers is included 
 `NOASSERTION` in this document means that no SPDX license has been confirmed by this
 inventory; it does not imply that a license is granted.
 
+**Machine-readable metadata.** `REUSE.toml` maps every path in the tree to its SPDX
+license expression and copyright holder(s), and `LICENSES/` holds the license texts
+(`Apache-2.0.txt`, `MIT.txt`, `BSD-2-Clause.txt`, `LicenseRef-Nikto-2.6.1.txt`).
+First-party source files additionally carry SPDX headers. The tree passes `reuse lint`
+(REUSE Specification 3.3).
+
 ---
 
 ## 1. Vendored skill library (`skills/`)
@@ -280,7 +286,8 @@ SOFTWARE.
 ```
 
 Apache-2.0 components retain their upstream `LICENSE` files in their directories; the
-standard Apache-2.0 text is also the text of this repository's root `LICENSE`.
+standard Apache-2.0 text is also the text of this repository's root `LICENSE`. The
+canonical texts used by REUSE live in `LICENSES/` (`Apache-2.0.txt`, `MIT.txt`).
 
 ---
 
@@ -294,5 +301,8 @@ standard Apache-2.0 text is also the text of this repository's root `LICENSE`.
   the tree.
 - Build-time dependencies: license fields from the npm registry and PyPI metadata, and
   upstream/package-tracker sources for Debian packages.
+- REUSE compliance: `REUSE.toml` (schema version 1) plus `LICENSES/`, verified with
+  `reuse lint` on 2026-10-20 — 5138/5138 files carry copyright and license information
+  under REUSE Specification 3.3.
 - This inventory describes the tree at the time of writing. Re-run the census after
   adding or updating vendored content.

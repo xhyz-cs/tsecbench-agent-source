@@ -2,7 +2,7 @@
 
 > Licensing status for every source listed here (SPDX identifiers, in-directory LICENSE
 > evidence, and compliance flags) is inventoried in
-> [`../THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md). In-house skills under
+> [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md). In-house skills under
 > `kit/` are original project material licensed under Apache-2.0, not third-party
 > content.
 >

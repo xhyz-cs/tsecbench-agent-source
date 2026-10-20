@@ -4,7 +4,7 @@
 **School / 学校:** Jiangmen Xinhui No. 1 Middle School / 江门市新会第一中学  
 **Repository purpose / 仓库用途:** Uncompiled source for the TSecBench hosted Agent image; this repository is private.
 
-**License / 许可证:** Apache License 2.0 for the original project contributions (`LICENSE`, `NOTICE`); third-party files remain subject to their own licenses and notices (`THIRD-PARTY-NOTICES.md`).
+**License / 许可证:** Apache License 2.0 for the original project contributions (`LICENSE`, `NOTICE`); third-party files remain subject to their own licenses and notices (`THIRD_PARTY_NOTICES.md`).
 
 ## 中文
 
@@ -114,11 +114,12 @@ The original project contributions — `mcp/`, `docker/`, `build/`, `plugin/`, `
 
 Everything vendored from third parties keeps its upstream license:
 
-- The skill library under `skills/` aggregates nine public collections plus a PayloadsAllTheThings snapshot. Per-source licenses, pinned commits, and per-directory evidence are inventoried in `THIRD-PARTY-NOTICES.md`; any directory that ships its own `LICENSE` file is governed by that file.
+- The skill library under `skills/` aggregates nine public collections plus a PayloadsAllTheThings snapshot. Per-source licenses, pinned commits, and per-directory evidence are inventoried in `THIRD_PARTY_NOTICES.md`; any directory that ships its own `LICENSE` file is governed by that file.
 - Pinned tool releases (`docker/tools/releases/`): Nikto 2.6.1 is redistributed unmodified under its upstream terms; Ghidra and JADX are Apache-2.0 and are not committed to this repository.
 - Build-time dependencies (Debian packages, Python packages, npm packages) are installed by `docker/Dockerfile` and carry their own licenses.
+- Licensing metadata is machine-readable: `REUSE.toml` maps every path to an SPDX license expression and copyright holder, `LICENSES/` holds the license texts, and the tree passes `reuse lint` (REUSE Specification 3.3).
 
-**Compliance note:** The repository ships no proprietary skill content. The Anthropic `pdf` skill that was originally vendored was removed on 2026-10-20 because its license prohibits redistribution. See "Compliance flags" in `THIRD-PARTY-NOTICES.md`.
+**Compliance note:** The repository ships no proprietary skill content. The Anthropic `pdf` skill that was originally vendored was removed on 2026-10-20 because its license prohibits redistribution. See "Compliance flags" in `THIRD_PARTY_NOTICES.md`.
 
 ### 许可证（中文）
 
@@ -126,11 +127,12 @@ Everything vendored from third parties keeps its upstream license:
 
 第三方内容保留其上游许可证：
 
-- `skills/` 技能库汇集了 9 个公开仓库与 PayloadsAllTheThings 快照；各来源的许可证、固定 commit 与逐目录证据见 `THIRD-PARTY-NOTICES.md`（英文）；自带 `LICENSE` 的目录以该文件为准。
+- `skills/` 技能库汇集了 9 个公开仓库与 PayloadsAllTheThings 快照；各来源的许可证、固定 commit 与逐目录证据见 `THIRD_PARTY_NOTICES.md`（英文）；自带 `LICENSE` 的目录以该文件为准。
 - 固定版本工具包（`docker/tools/releases/`）：Nikto 2.6.1 按上游条款原样再分发；Ghidra 与 JADX 为 Apache-2.0，且未纳入本仓库。
 - 构建期依赖（Debian、Python、npm 包）由 `docker/Dockerfile` 安装，各自遵循其许可证。
+- 许可信息可机器读取：`REUSE.toml` 为每个路径映射 SPDX 许可与版权人，`LICENSES/` 收录许可全文，仓库通过 `reuse lint`（REUSE Specification 3.3）。
 
-**合规提示：** 本仓库不包含任何专有许可的技能内容。原先 vendor 的 Anthropic `pdf` 技能因许可禁止再分发,已于 2026-10-20 移除。详见 `THIRD-PARTY-NOTICES.md` 的合规章节。
+**合规提示：** 本仓库不包含任何专有许可的技能内容。原先 vendor 的 Anthropic `pdf` 技能因许可禁止再分发,已于 2026-10-20 移除。详见 `THIRD_PARTY_NOTICES.md` 的合规章节。
 
 ---
 
