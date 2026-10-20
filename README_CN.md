@@ -179,6 +179,10 @@ python -m unittest discover -s mcp/tests -t mcp/tests -v    # 全部集成测试
 如对外分享，请保留本出处说明。</sub>
 
 
+## 贡献
+
+本仓库只接受 Pull Request，Issues 与 Discussions 已关闭；提交前请阅读 `CONTRIBUTING.md`（英文，含中文摘要）。
+
 ## 许可证
 
 本项目原创内容——`mcp/`、`docker/`、`build/`、`plugin/`、`docs/`、`skills/kit/` 下的自研技能与方法论文档，以及项目文档——由 James 与 minc 版权所有（2026），采用 **Apache License 2.0**（根目录 `LICENSE`），署名声明见 `NOTICE`。

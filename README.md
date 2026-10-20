@@ -108,6 +108,14 @@ Use `.env.example` as a template and keep any real local `.env` out of version c
 - `docs/` — Platform API, modes, SDK, and Agent prompt documentation.
 - `build/` — Documentation and configuration-scan helper scripts.
 
+## Contributing
+
+Contributions are accepted **only as pull requests**; issues and discussions are disabled on this repository. Read `CONTRIBUTING.md` before opening a PR.
+
+### 贡献方式（中文）
+
+本仓库只接受 Pull Request，Issues 与 Discussions 已关闭；提交前请阅读 `CONTRIBUTING.md`（英文，含中文摘要）。
+
 ## License
 
 The original project contributions — `mcp/`, `docker/`, `build/`, `plugin/`, `docs/`, the in-house skills under `skills/kit/` with their methodology notes, and the project documentation — are Copyright 2026 James and minc and licensed under the **Apache License 2.0** (`LICENSE`). Attribution notices are in `NOTICE`.
