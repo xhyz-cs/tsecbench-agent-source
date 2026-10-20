@@ -71,31 +71,6 @@ and obtaining, copying, deploying, or using this repository constitutes acceptan
 
 ---
 
-## Enforcement
-
-GitHub branch protection and repository rulesets are **not available on this
-repository's current plan**: the API answers `Upgrade to GitHub Pro or make this
-repository public to enable this feature` for a private repository. Until the
-repository moves to a plan that supports them (or is made public), PR-only is
-enforced by the tracked `pre-push` hook in `.githooks/`. Enable it once per clone:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-The hook rejects any push that updates `main` and prints the branch/PR workflow.
-Maintainers may bypass it deliberately for an emergency with:
-
-```bash
-TSEC_ALLOW_DIRECT_PUSH=1 git push
-```
-
-If the repository is later upgraded to GitHub Pro/Team, enable server-side branch
-protection (require pull requests before merging) and keep this hook as a local
-fallback.
-
----
-
 ## 中文摘要
 
 本仓库**只接受 Pull Request**，Issues 与 Discussions 均已关闭。
@@ -118,8 +93,3 @@ fallback.
 6. 文档改动必须遵循 `docs/style-guide.md`（术语、标点、规范性用语与文档分类规则）。
 
 **竞赛使用限制：** 除维护团队及其书面授权的成员外，任何第三方不得**直接使用本仓库**参加与本项目目标赛事同类的比赛或评测。第三方自行创作的**衍生物不受此限**。完整条款见 `DISCLAIMER.md`（中文为正式文本）；该限制为使用条件，获取、复制、部署或使用本仓库即视为接受。
-
-**执行机制：**当前私有仓库套餐不支持 GitHub 分支保护与 Rulesets（API 返回需要升级
-Pro/Team 或公开仓库），因此暂以仓库内 `.githooks/pre-push` 钩子执行。每个克隆执行
-`git config core.hooksPath .githooks` 后，直推 `main` 会被拒绝；维护者可临时用
-`TSEC_ALLOW_DIRECT_PUSH=1 git push` 绕过。升级套餐后应改为服务端分支保护。

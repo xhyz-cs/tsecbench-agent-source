@@ -131,7 +131,7 @@ python -m unittest discover -s mcp/tests -v               # 全部集成测试�
 ├── plugin/                         # Claude Code 插件与权限钩子
 ├── skills/                         # 技能库与导航索引
 ├── build/                          # 文档整理与配置扫描辅助脚本
-└── .githooks/                      # 本地预推钩子（禁止直推 main）
+└── .github/                        # Pull Request 模板
 ```
 
 ---
