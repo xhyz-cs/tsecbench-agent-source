@@ -146,9 +146,13 @@ Everything vendored from third parties keeps its upstream license:
 
 This project is provided **for education, research, CTF competitions, and authorized security testing only**. Using its skills, scripts, or payloads against systems without prior written authorization may violate the law. The maintainers are **not affiliated with, do not endorse, and accept no responsibility for** any non-compliant use by third parties; such use is the sole responsibility of the person performing it. This project is governed by the **laws of the People's Republic of China**. See `DISCLAIMER.md` — the Chinese text is the authoritative version.
 
+**Competitive-use restriction:** except for the project's maintainers and members they authorize in writing, no third party may **directly use this repository** to participate in competitions or evaluations of the same kind as the competition this project targets (autonomous-agent offensive-security, penetration-testing, or security-agent capability). Derivative works created by third parties are **not** restricted.
+
 ### 免责声明（中文）
 
-本项目仅用于**教学、研究、CTF 竞赛与授权安全测试**。未经事先书面授权,不得将本仓库的技能、脚本或载荷用于任何系统,否则可能违法。维护者**与任何第三方将本项目用于非合规用途无关**,不构成同意、授权、协助或背书,亦不承担相关责任;该等行为由行为人独立承担全部责任。本项目适用**中华人民共和国法律**。详见 `DISCLAIMER.md`(中文版本为正式文本)。
+本项目仅用于**教学、研究、CTF 竞赛与授权安全测试**。未经事先书面授权，不得将本仓库的技能、脚本或载荷用于任何系统，否则可能违法。维护者**与任何第三方将本项目用于非合规用途无关**，不构成同意、授权、协助或背书，亦不承担相关责任；该等行为由行为人独立承担全部责任。本项目适用**中华人民共和国法律**。详见 `DISCLAIMER.md`（中文版本为正式文本）。
+
+**竞赛使用限制：** 除维护团队及其书面授权的成员外，任何第三方**不得直接使用本仓库**参加与本项目目标赛事同类的比赛或评测（以自主 Agent 攻防能力、渗透测试能力或安全智能体能力为评测对象）。第三方自行创作的**衍生物不受此限**。
 
 ---
 
