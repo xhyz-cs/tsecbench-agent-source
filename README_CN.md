@@ -197,3 +197,9 @@ python -m unittest discover -s mcp/tests -t mcp/tests -v    # 全部集成测试
 **合规提示：** 本仓库不包含任何专有许可的技能内容。原先 vendor 的 Anthropic `pdf` 技能因许可禁止在 Anthropic 服务之外保留与再分发，已于 2026-10-20 移除。详见 `THIRD_PARTY_NOTICES.md` 的 "Compliance flags" 章节。
 
 > English: see the "License" section of `README.md` and the full inventory in `THIRD_PARTY_NOTICES.md`.
+
+## 免责声明
+
+本项目仅用于**教学、研究、CTF 竞赛与授权安全测试**。未经事先书面授权，不得将本仓库的技能、脚本或载荷用于任何系统，否则可能违反《中华人民共和国网络安全法》《数据安全法》《刑法》等法律法规。维护者**与任何第三方将本项目用于非合规用途无关**，不构成同意、授权、协助或背书，亦不承担相关责任；该等行为由行为人独立承担全部责任。本项目适用**中华人民共和国法律**，争议提交维护者住所地（广东省江门市）有管辖权的人民法院解决。详见 `DISCLAIMER.md`（中文版本为正式文本）。
+
+> English: this project is for education, research, CTF, and authorized security testing only; the maintainers are not responsible for non-compliant third-party use. Governed by the laws of the People's Republic of China. See `DISCLAIMER.md`.
