@@ -131,11 +131,14 @@ Source paths: `secskills-offense/skills/<name>/` unless noted `core:` (= `secski
 | kerberos-attacks | AD | Kerberoasting, AS-REP, delegation attacks | 1 | no |
 | adcs-attacks | AD | ADCS ESC1–ESC17 with certipy | 1 | no |
 
-## 5. anthropics/skills @ dbd4588 (1 skill)
+## 5. anthropics/skills @ dbd4588 — REMOVED (2026-10-20)
 
-| Skill | Categories | Purpose | Files | Scripts |
-|---|---|---|---|---|
-| pdf | METH,CTF | PDF reading/form-filling/annotation (report output; PDF-based CTF tasks) | 12 | yes — 8 local scripts: pypdf/pdfplumber/pdf2image/PIL form extraction, filling, validation-image generation; no network |
+The `pdf` skill was removed from this tree for licensing reasons: its `LICENSE.txt`
+is Anthropic-proprietary and prohibits retaining, reproducing, or redistributing the
+material outside Anthropic's services. Upstream: https://github.com/anthropics/skills
+(commit `dbd4588`); retrieve it under the applicable Anthropic agreement if needed.
+PDF work remains covered by `analyzing-malicious-pdf-with-peepdf` and
+`analyzing-pdf-malware-with-pdfid`.
 
 ## 6. SnailSploit/Claude-Red @ a8de813 (35 skills, single-file markdown)
 

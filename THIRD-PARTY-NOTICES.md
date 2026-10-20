@@ -22,7 +22,7 @@ inventory; it does not imply that a license is granted.
 
 ## 1. Vendored skill library (`skills/`)
 
-`skills/` contains **987 `SKILL.md` files** from nine public GitHub collections, one
+`skills/` contains **986 `SKILL.md` files** from eight public GitHub collections, one
 reference snapshot, and in-house skills. Files were taken file-by-file at the pinned
 commits below (provenance detail: `skills/SOURCES.md`). Every vendored directory that
 ships its own `LICENSE` file is governed by that file.
@@ -33,7 +33,6 @@ ships its own `LICENSE` file is governed by that file.
 | S2 | https://github.com/ljagiello/ctf-skills | `c957f4f4fe8bb5c9da11e3494da3c5702a3ce878` | `skills/ctf-*/` (9 directories, incl. `ctf-writeup`), `skills/solve-challenge/` | 10 | MIT | Upstream `LICENSE` — Copyright (c) 2026 Lukasz Jagiello; per-file `license: MIT` |
 | S3 | https://github.com/trilwu/secskills | `ca53957bcd8e3b83b5d4d190bb3ad008a4f15c84` | `skills/<name>/` | 38 | MIT | Upstream `LICENSE` — Copyright (c) 2025 Tri Luu |
 | S4 | https://github.com/ADScanPro/Claude-AD | `73efec51207f6f740cb398e1c490e5edd60c1113` | `skills/kerberos-attacks/`, `skills/adcs-attacks/` | 2 | MIT | Upstream `LICENSE` — Copyright (c) 2026 ADscan |
-| S5 | https://github.com/anthropics/skills | `dbd4588f9e1033efb41dad4bef2f7947c8993d44` | `skills/pdf/` | 1 | **Proprietary (Anthropic)** | In-tree `skills/pdf/LICENSE.txt`; frontmatter `license: Proprietary` |
 | S6 | https://github.com/SnailSploit/Claude-Red | `a8de813edc9f66f60d44cfe42d47750e89d9930b` | `skills/<name>/` | 35 | MIT | Upstream `LICENSE` — Copyright (c) 2024-2025 SnailSploit / Kai Aizen |
 | S7 | https://github.com/securityfortech/hacking-skills | `0aa49b400dc0e093947e393c45c09821bb8d45f4` | `skills/web/**` directories | 28 | 24 × MIT + 4 × Apache-2.0 (per file) | **No repository-level LICENSE.** Frontmatter declares MIT for 24 skills and Apache-2.0 for 4 (`jwt-misconfig`, `mass-assignment`, `open-redirect`, `insecure-file-upload`); no license text accompanies either declaration. See F2 |
 | S8 | https://github.com/mukul975/Anthropic-Cybersecurity-Skills | `54a798831d2266a3ca61ce68a7acb80b81160d57` | `skills/<name>/` | 818 | Apache-2.0 | Repository license Apache-2.0; 817 of the 818 directories ship an Apache-2.0 `LICENSE` (see 1.1) |
@@ -47,9 +46,15 @@ Additional in-tree content:
 | `skills/kit/` (5 skills + `_methodology/`) | In-house skills authored by this project's team | Apache-2.0 (this repository) | Not third-party. Original project material; frontmatter declares `license: Apache-2.0` |
 | `skills/ctf-*` (9 directories in the current tree) | Derived from ljagiello/ctf-skills (S2, MIT); curated versions supplied in the teammate kit, six of them replacing earlier copies | MIT | Modifications by the team; MIT notice of the upstream holder applies |
 
+### Removed components
+
+| Source | Commit | Removed | Reason |
+|---|---|---|---|
+| https://github.com/anthropics/skills — `pdf` skill | `dbd4588f9e1033efb41dad4bef2f7947c8993d44` | 2026-10-20 | In-tree `LICENSE.txt` is Anthropic-proprietary and prohibits retention, reproduction, derivative works, and redistribution outside Anthropic's services. Retrieve it under the applicable Anthropic agreement if needed |
+
 ### 1.1 Per-directory license files — census
 
-`skills/` contains **819 license-bearing files** (818 `LICENSE` + `skills/pdf/LICENSE.txt`):
+`skills/` contains **818 license-bearing files** (818 `LICENSE`):
 
 | Count | Text | Copyright holder | Scope |
 |---:|---|---|---|
@@ -57,7 +62,6 @@ Additional in-tree content:
 | 2 | Apache-2.0 (short form) | 2025 mukul975 | `implementing-attack-surface-management`, `performing-cloud-log-forensics-with-athena` |
 | 1 | Apache-2.0 (standard appendix form) | 2026 dakshverma23 | `conducting-gdpr-compliance-assessment` |
 | 1 | MIT | 2019 Swissky | `payloadsallthethings` |
-| 1 | Anthropic proprietary terms | 2025 Anthropic, PBC | `pdf` |
 
 Note: of the 818 S8 directories, 817 carry one of the Apache-2.0 files above; one
 directory has no readable `LICENSE` text. Its `SKILL.md` still declares
@@ -66,11 +70,11 @@ status is unchanged — only the per-directory copy is missing.
 
 ### 1.2 Frontmatter `license:` declarations
 
-Across the 987 `SKILL.md` files: **827** declare `license: Apache-2.0`, **56** declare
-`license: MIT`, **1** declares `license: Proprietary. LICENSE.txt has complete terms`
-(`skills/pdf`), and **103** carry no license field. Files without a field are governed
+Across the 986 `SKILL.md` files: **827** declare `license: Apache-2.0`, **56** declare
+`license: MIT`, and **103** carry no license field. Files without a field are governed
 by the license of their source repository in the table above. (The 827 includes the
-five in-house `skills/kit/` skills, whose declarations were added by this project.)
+five in-house `skills/kit/` skills, whose declarations were added by this project. The
+removed `pdf` skill was the only proprietary declaration and is no longer in the tree.)
 
 ### 1.3 MIT copyright notices
 
@@ -202,23 +206,15 @@ without a license review:
 
 ## 5. Compliance flags and required actions
 
-### F1 — `skills/pdf` is Anthropic-proprietary (blocker before publication)
+### F1 — `skills/pdf` (Anthropic-proprietary) — RESOLVED 2026-10-20
 
-`skills/pdf/LICENSE.txt` states that the materials may not be extracted from
-Anthropic's services, retained outside them, reproduced, used to create derivative
-works, or distributed/sublicensed to third parties. The directory (12 files, including
-8 scripts) was fetched from the public `anthropics/skills` repository, but its in-tree
-license imposes those restrictions regardless of the fetch path.
-
-Required action before making this repository public **or** distributing a built image:
-
-```bash
-git rm -r skills/pdf
-```
-
-Then remove the `pdf` row from `skills/INDEX.md` §5 and the related audit references.
-If the skill is needed at runtime, retrieve it from Anthropic's distribution channel
-under the applicable agreement instead of vendoring it.
+The `pdf` skill was removed from the tree (`git rm -r skills/pdf`) because its
+`LICENSE.txt` prohibits retaining, reproducing, and redistributing the material outside
+Anthropic's services. No proprietary skill content remains in the repository. If PDF
+tooling is needed later, retrieve it from Anthropic's distribution channel under the
+applicable agreement, or use an Apache-2.0/MIT alternative (PDF work is still covered by
+the `analyzing-malicious-pdf-with-peepdf` and `analyzing-pdf-malware-with-pdfid`
+skills). The upstream pointer is recorded under "Removed components" in section 1.
 
 ### F2 — `securityfortech/hacking-skills` has no repository-level license (S7)
 

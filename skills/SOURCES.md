@@ -5,6 +5,10 @@
 > [`../THIRD-PARTY-NOTICES.md`](../THIRD-PARTY-NOTICES.md). In-house skills under
 > `kit/` are original project material licensed under Apache-2.0, not third-party
 > content.
+>
+> **Post-collection removals:** `skills/pdf` (source #5) was removed on 2026-10-20
+> because its license is Anthropic-proprietary and prohibits retention outside
+> Anthropic's services. Counts below are the audit-time records and are not adjusted.
 
 All skills under `skills/` were collected on **2026-10-16/17** from public GitHub
 repositories at the pinned commits below, file-by-file via `raw.githubusercontent.com`

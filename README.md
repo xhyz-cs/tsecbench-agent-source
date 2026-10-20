@@ -118,7 +118,7 @@ Everything vendored from third parties keeps its upstream license:
 - Pinned tool releases (`docker/tools/releases/`): Nikto 2.6.1 is redistributed unmodified under its upstream terms; Ghidra and JADX are Apache-2.0 and are not committed to this repository.
 - Build-time dependencies (Debian packages, Python packages, npm packages) are installed by `docker/Dockerfile` and carry their own licenses.
 
-**Compliance note:** `skills/pdf` is included under Anthropic's proprietary terms (`skills/pdf/LICENSE.txt`), which prohibit retaining, reproducing, or redistributing the material outside Anthropic's services. It must be removed before this repository or the built image is published. See "Compliance flags" in `THIRD-PARTY-NOTICES.md`.
+**Compliance note:** The repository ships no proprietary skill content. The Anthropic `pdf` skill that was originally vendored was removed on 2026-10-20 because its license prohibits redistribution. See "Compliance flags" in `THIRD-PARTY-NOTICES.md`.
 
 ### 许可证（中文）
 
@@ -130,7 +130,7 @@ Everything vendored from third parties keeps its upstream license:
 - 固定版本工具包（`docker/tools/releases/`）：Nikto 2.6.1 按上游条款原样再分发；Ghidra 与 JADX 为 Apache-2.0，且未纳入本仓库。
 - 构建期依赖（Debian、Python、npm 包）由 `docker/Dockerfile` 安装，各自遵循其许可证。
 
-**合规提示：** `skills/pdf` 按 Anthropic 专有条款收录（`skills/pdf/LICENSE.txt`），该条款禁止在 Anthropic 服务之外保留、复制与再分发。公开本仓库或分发构建镜像前必须移除。详见 `THIRD-PARTY-NOTICES.md` 的合规章节。
+**合规提示：** 本仓库不包含任何专有许可的技能内容。原先 vendor 的 Anthropic `pdf` 技能因许可禁止再分发,已于 2026-10-20 移除。详见 `THIRD-PARTY-NOTICES.md` 的合规章节。
 
 ---
 

@@ -189,6 +189,6 @@ python -m unittest discover -s mcp/tests -t mcp/tests -v    # 全部集成测试
 - 固定版本工具包（`docker/tools/releases/`）：Nikto 2.6.1 按上游条款原样再分发（代码为 GPL-3.0-only 并附附加条款；数据库文件不适用 GPL，仅限随官方包分发；内置 LibWhisker 为 BSD-2-Clause，均见包内 `COPYING`/`COPYING.LibWhisker`）；Ghidra（Apache-2.0）与 JADX（Apache-2.0）为可选包，未纳入本仓库。`docker/tools/LICENSES-and-NOTICES.md` 保留队友工具包的来源记录。
 - 构建期依赖（Debian 系统包、Python 包、npm 包）由 `docker/Dockerfile` 安装，各自遵循其许可证。
 
-**合规提示：** `skills/pdf` 按 Anthropic 专有条款收录（`skills/pdf/LICENSE.txt`），该条款禁止在 Anthropic 服务之外保留、复制与再分发。公开本仓库或分发构建镜像前必须移除。详见 `THIRD-PARTY-NOTICES.md` 的 "Compliance flags" 章节。
+**合规提示：** 本仓库不包含任何专有许可的技能内容。原先 vendor 的 Anthropic `pdf` 技能因许可禁止在 Anthropic 服务之外保留与再分发，已于 2026-10-20 移除。详见 `THIRD-PARTY-NOTICES.md` 的 "Compliance flags" 章节。
 
 > English: see the "License" section of `README.md` and the full inventory in `THIRD-PARTY-NOTICES.md`.
