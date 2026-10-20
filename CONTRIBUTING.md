@@ -59,6 +59,18 @@ or to request features — open a pull request instead.
 4. After merge, the pull request is the permanent record of the change and its
    justification.
 
+## Competitive use
+
+Except for the project's maintainers and members they authorize in writing, no third
+party may **directly use this repository** to participate in competitions or evaluations
+of the same kind as the competition this project targets (autonomous-agent
+offensive-security, penetration-testing, or security-agent capability). **Derivative
+works created by third parties are not restricted.** The full terms are in
+`DISCLAIMER.md` (Chinese text is authoritative); the restriction is a condition of use,
+and obtaining, copying, deploying, or using this repository constitutes acceptance.
+
+---
+
 ## Enforcement
 
 GitHub branch protection and repository rulesets are **not available on this
@@ -104,6 +116,8 @@ fallback.
 4. 不得提交密钥或真实 `.env`。
 5. 提交 PR 即表示你有权贡献该内容，并同意其按本仓库 Apache-2.0 许可分发。
 6. 文档改动必须遵循 `docs/style-guide.md`（术语、标点、规范性用语与文档分类规则）。
+
+**竞赛使用限制：** 除维护团队及其书面授权的成员外，任何第三方不得**直接使用本仓库**参加与本项目目标赛事同类的比赛或评测。第三方自行创作的**衍生物不受此限**。完整条款见 `DISCLAIMER.md`（中文为正式文本）；该限制为使用条件，获取、复制、部署或使用本仓库即视为接受。
 
 **执行机制：**当前私有仓库套餐不支持 GitHub 分支保护与 Rulesets（API 返回需要升级
 Pro/Team 或公开仓库），因此暂以仓库内 `.githooks/pre-push` 钩子执行。每个克隆执行
