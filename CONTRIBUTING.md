@@ -56,6 +56,29 @@ or to request features — open a pull request instead.
 4. After merge, the pull request is the permanent record of the change and its
    justification.
 
+## Enforcement
+
+GitHub branch protection and repository rulesets are **not available on this
+repository's current plan**: the API answers `Upgrade to GitHub Pro or make this
+repository public to enable this feature` for a private repository. Until the
+repository moves to a plan that supports them (or is made public), PR-only is
+enforced by the tracked `pre-push` hook in `.githooks/`. Enable it once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook rejects any push that updates `main` and prints the branch/PR workflow.
+Maintainers may bypass it deliberately for an emergency with:
+
+```bash
+TSEC_ALLOW_DIRECT_PUSH=1 git push
+```
+
+If the repository is later upgraded to GitHub Pro/Team, enable server-side branch
+protection (require pull requests before merging) and keep this hook as a local
+fallback.
+
 ---
 
 ## 中文摘要
@@ -77,3 +100,8 @@ or to request features — open a pull request instead.
    `REUSE.toml`，且 `reuse lint` 必须通过。
 4. 不得提交密钥或真实 `.env`。
 5. 提交 PR 即表示你有权贡献该内容，并同意其按本仓库 Apache-2.0 许可分发。
+
+**执行机制：**当前私有仓库套餐不支持 GitHub 分支保护与 Rulesets（API 返回需要升级
+Pro/Team 或公开仓库），因此暂以仓库内 `.githooks/pre-push` 钩子执行。每个克隆执行
+`git config core.hooksPath .githooks` 后，直推 `main` 会被拒绝；维护者可临时用
+`TSEC_ALLOW_DIRECT_PUSH=1 git push` 绕过。升级套餐后应改为服务端分支保护。
